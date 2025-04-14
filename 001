@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>提示工程 - 深度指南</title>
+    <script src="https://cdn.tailwindcss.com/3.4.3"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Base styles */
+        body {
+            @apply bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-200 transition-colors duration-300;
+        }
+        /* Custom scrollbar (optional, for aesthetics) */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            @apply bg-gray-100 dark:bg-gray-800;
+        }
+        ::-webkit-scrollbar-thumb {
+            @apply bg-gray-400 dark:bg-gray-600 rounded;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            @apply bg-gray-500 dark:bg-gray-500;
+        }
+        /* Card hover effect */
+        .content-card {
+            @apply bg-gray-50 dark:bg-gray-800/50 p-6 rounded-lg shadow-sm hover:shadow-lg hover:border-blue-500/30 dark:hover:border-blue-400/30 border border-transparent transition-all duration-300;
+        }
+        /* Code block styling */
+        pre {
+            @apply bg-gray-100 dark:bg-gray-800 p-4 rounded-md overflow-x-auto text-sm font-mono mb-4;
+        }
+        code {
+             @apply font-mono;
+        }
+        /* Table styling */
+        table {
+            @apply w-full border-collapse text-sm mb-6;
+        }
+        th, td {
+            @apply border border-gray-300 dark:border-gray-600 p-3 text-left;
+        }
+        th {
+            @apply bg-gray-100 dark:bg-gray-700 font-semibold;
+        }
+        tbody tr:nth-child(even) {
+            @apply bg-gray-50 dark:bg-gray-800/50;
+        }
+        /* Responsive table wrapper */
+        .table-wrapper {
+            @apply overflow-x-auto mb-6 shadow-sm rounded-lg border border-gray-200 dark:border-gray-700;
+        }
+         /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        /* Delay animations for sections */
+        main > section {
+            opacity: 0; /* Start hidden */
+        }
+
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto px-4 py-8 md:py-12 max-w-5xl">
+
+        <!-- Header -->
+        <header class="mb-12 text-center fade-in">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-3">提示工程</h1>
+            <p class="text-lg text-gray-600 dark:text-gray-400 mb-1">作者: Lee Boonstra</p>
+            <p class="text-sm text-gray-500 dark:text-gray-500">发布: Google | 日期: 2024年9月</p>
+            <button id="theme-toggle" class="absolute top-4 right-4 p-2 rounded-full text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 focus:outline-none">
+                <i class="fas fa-sun theme-icon-light"></i>
+                <i class="fas fa-moon theme-icon-dark hidden"></i>
+            </button>
+        </header>
+
+        <main class="space-y-12">
+
+            <!-- Acknowledgements -->
+            <section id="acknowledgements" class="fade-in">
+                <h2 class="text-2xl font-semibold mb-6 border-l-4 border-blue-500 pl-3 text-gray-800 dark:text-gray-100">致谢</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-lg font-medium mb-3 text-gray-700 dark:text-gray-300">审阅者与贡献者</h3>
+                        <ul class="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400">
+                            <li>Michael Sherman</li>
+                            <li>Yuan Cao</li>
+                            <li>Erick Armbrust</li>
+                            <li>Anant Nawalgaria</li>
+                            <li>Antonio Gulli</li>
+                            <li>Simone Cammel</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-medium mb-3 text-gray-700 dark:text-gray-300">策划与编辑</h3>
+                        <ul class="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400">
+                            <li>Antonio Gulli</li>
+                            <li>Anant Nawalgaria</li>
+                            <li>Grace Mollison</li>
+                        </ul>
+                        <h3 class="text-lg font-medium mt-4 mb-3 text-gray-700 dark:text-gray-300">技术作者</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Joey Haymaker</p>
+                        <h3 class="text-lg font-medium mt-4 mb-3 text-gray-700 dark:text-gray-300">设计师</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Michael Lanning</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Table of Contents (Simplified) -->
+            <section id="toc" class="fade-in">
+                 <h2 class="text-2xl font-semibold mb-6 border-l-4 border-blue-500 pl-3 text-gray-800 dark:text-gray-100">目录</h2>
+                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <a href="#introduction" class="block p-3 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/50 dark:hover:bg-gray-700/60 rounded-md transition-colors duration-200 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">引言</a>
+                    <a href="#prompt-engineering-def" class="block p-3 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/50 dark:hover:bg-gray-700/60 rounded-md transition-colors duration-200 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">什么是提示工程</a>
+                    <a href="#llm-output-config" class="block p-3 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/50 dark:hover:bg-gray-700/60 rounded-md transition-colors duration-200 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">LLM 输出配置</a>
+                    <a href="#prompting-techniques" class="block p-3 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/50 dark:hover:bg-gray-700/60 rounded-md transition-colors duration-200 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">提示技巧</a>
+                    <a href="#code-prompting" class="block p-3 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/50 dark:hover:bg-gray-700/60 rounded-md transition-colors duration-200 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">代码提示</a>
+                    <a href="#multimodal-prompting" class="block p-3 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/50 dark:hover:bg-gray-700/60 rounded-md transition-colors duration-200 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">多模态提示</a>
+                    <a href="#best-practices" class="block p-3 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/50 dark:hover:bg-gray-700/60 rounded-md transition-colors duration-200 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">最佳实践</a>
+                    <a href="#summary" class="block p-3 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/50 dark:hover:bg-gray-700/60 rounded-md transition-colors duration-200 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">总结</a>
+                    <a href="#endnotes" class="block p-3 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/50 dark:hover:bg-gray-700/60 rounded-md transition-colors duration-200 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">尾注</a>
+                 </div>
+            </section>
+
+            <!-- Introduction -->
+            <section id="introduction" class="fade-in">
+                <h2 class="text-2xl font-semibold mb-6 border-l-4 border-blue-500 pl-3 text-gray-800 dark:text-gray-100">引言</h2>
+                <div class="content-card">
+                    <p class="mb-4 text-lg italic text-blue-700 dark:text-blue-300">"你不需要是数据科学家或机器学习工程师——每个人都可以编写提示。"</p>
+                    <p class="mb-4 leading-relaxed">在考虑大型语言模型（LLM）的输入和输出时，文本提示（有时伴随其他模态，如图像提示）是模型用来预测特定输出的输入。你不需要成为数据科学家或机器学习工程师——每个人都可以编写提示。然而，制作最有效的提示可能很复杂。提示的许多方面都会影响其效果：你使用的模型、模型的训练数据、模型配置、你的措辞选择、风格和语调、结构以及上下文都很重要。因此，提示工程是一个迭代的过程。不充分的提示可能导致模糊、不准确的响应，并可能妨碍模型提供有意义输出的能力。</p>
+                    <p class="leading-relaxed">当你与 Gemini 聊天机器人¹ 聊天时，你基本上是在编写提示。然而，本白皮书侧重于在 Vertex AI 内或通过 API 为 Gemini 模型编写提示，因为直接提示模型可以让你访问温度等配置。</p>
+                    <p class="mt-4 leading-relaxed">本白皮书详细讨论了提示工程。我们将探讨各种提示技巧，帮助你入门，并分享成为提示专家的技巧和最佳实践。我们还将讨论在制作提示时可能面临的一些挑战。</p>
+                </div>
+            </section>
+
+            <!-- Prompt Engineering Definition -->
+             <section id="prompt-engineering-def" class="fade-in">
+                <h2 class="text-2xl font-semibold mb-6 border-l-4 border-blue-500 pl-3 text-gray-800 dark:text-gray-100">什么是提示工程</h2>
+                 <div class="content-card">
+                    <p class="mb-4 leading-relaxed">回想一下 LLM 的工作原理；它是一个预测引擎。模型将顺序文本作为输入，然后根据其训练数据预测下一个标记应该是什么。LLM 被操作化以一遍又一遍地执行此操作，将先前预测的标记添加到顺序文本的末尾，以预测下一个标记。下一个标记的预测基于先前标记中的内容与 LLM 在训练期间看到的内容之间的关系。</p>
+                    <p class="mb-4 leading-relaxed">当你编写提示时，你试图设置 LLM 以预测正确的标记序列。**提示工程**是设计高质量提示以引导 LLM 产生准确输出的过程。这个过程涉及反复试验以找到最佳提示，优化提示长度，并评估提示的写作风格和结构与任务的关系。在自然语言处理和 LLM 的背景下，提示是提供给模型以生成响应或预测的输入。</p>
+                     <p class="leading-relaxed">这些提示可用于实现各种理解和生成任务，例如文本摘要、信息提取、问答、文本分类、语言或代码翻译、代码生成以及代码文档或推理。请随时参考 Google 的提示指南²,³ 获取简单有效的提示示例。</p>
+                </div>
+            </section>
+
+            <!-- LLM Output Configuration -->
+            <section id="llm-output-config" class="fade-in">
+                <h2 class="text-2xl font-semibold mb-6 border-l-4 border-blue-500 pl-3 text-gray-800 dark:text-gray-100">LLM 输出配置</h2>
+                <div class="content-card">
+                    <p class="mb-4 leading-relaxed">在进行提示工程时，你将首先选择一个模型。提示可能需要针对你的特定模型进行优化，无论你是在 Vertex AI 中使用 Gemini 语言模型、GPT、Claude，还是像 Gemma 或 LLaMA 这样的开源模型。</p>
+                    <p class="mb-4 leading-relaxed">除了提示之外，你还需要调整 LLM 的各种配置。一旦选择了模型，就需要确定模型配置。大多数 LLM 都带有各种配置选项来控制 LLM 的输出。有效的提示工程需要为你的任务优化这些配置。</p>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3 text-gray-700 dark:text-gray-300">输出长度</h3>
+                    <p class="mb-4 leading-relaxed">一个重要的配置设置是在响应中生成的标记数量。生成更多标记需要 LLM 进行更多计算，导致更高的能源消耗、可能更慢的响应时间和更高的成本。</p>
+                     <p class="mb-4 leading-relaxed">减少 LLM 的输出长度并不会导致 LLM 在其创建的输出中变得更具风格或文本简洁，它只是导致 LLM 在达到限制后停止预测更多标记。如果你的需求需要较短的输出长度，你可能还需要设计你的提示来适应。</p>
+                     <p class="mb-4 leading-relaxed">输出长度限制对于某些 LLM 提示技术（如 ReAct）尤其重要，在这些技术中，LLM 会在你想要的响应之后继续发出无用的标记。</p>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3 text-gray-700 dark:text-gray-300">采样控制</h3>
+                    <p class="mb-4 leading-relaxed">LLM 并非正式预测单个标记。相反，LLM 预测下一个标记可能是什么的概率，LLM 词汇表中的每个标记都会获得一个概率。然后对这些标记概率进行采样，以确定下一个产生的标记将是什么。**Temperature**、**top-K** 和 **top-P** 是最常见的配置设置，用于确定如何处理预测的标记概率以选择单个输出标记。</p>
+
+                    <h4 class="text-lg font-medium mt-4 mb-2 text-gray-600 dark:text-gray-400">Temperature (温度)</h4>
+                    <p class="mb-4 leading-relaxed">Temperature 控制标记选择中的随机程度。较低的温度适用于期望更确定性响应的提示，而较高的温度可能导致更多样化或意外的结果。温度为 0（贪婪解码）是确定性的：始终选择概率最高的标记（但请注意，如果两个标记具有相同的最高预测概率，根据平局处理方式的实现，你可能不总是在温度为 0 时获得相同的输出）。</p>
+                    <p class="mb-4 leading-relaxed">接近最大值的温度倾向于创建更随机的输出。随着温度越来越高，所有标记变得同样可能成为下一个预测的标记。</p>
+                     <p class="leading-relaxed">Gemini 温度控制可以理解为与机器学习中使用的 softmax 函数类似。低温设置反映了低 softmax 温度 (T)，强调具有高确定性的单个首选温度。较高的 Gemini 温度设置类似于高 softmax 温度，使得所选设置周围更宽范围的温度更容易接受。这种增加的不确定性适应了不需要严格、精确温度的场景，例如在进行创造性输出实验时。</p>
+
+                     <h4 class="text-lg font-medium mt-4 mb-2 text-gray-600 dark:text-gray-400">Top-K 和 Top-P</h4>
+                    <p class="mb-4 leading-relaxed">Top-K 和 top-P（也称为核采样）⁴ 是 LLM 中使用的两种采样设置，用于将预测的下一个标记限制为来自具有最高预测概率的标记。与温度类似，这些采样设置控制生成文本的随机性和多样性。</p>
+                    <ul class="list-disc list-inside space-y-2 mb-4 ml-4 text-gray-600 dark:text-gray-400">
+                        <li>**Top-K** 采样从模型的预测分布中选择 K 个最可能的标记。Top-K 越高，模型的输出越具创造性和多样性；Top-K 越低，模型的输出越受限制和基于事实。Top-K 为 1 等效于贪婪解码。</li>
+                        <li>**Top-P** 采样选择累积概率不超过某个值 (P) 的顶部标记。P 的值范围从 0（贪婪解码）到 1（LLM 词汇表中的所有标记）。</li>
+                    </ul>
+                    <p class="mb-4 leading-relaxed">选择 top-K 和 top-P 之间的最佳方法是同时（或一起）试验这两种方法，看看哪种方法能产生你正在寻找的结果。</p>
+
+
+                     <h3 class="text-xl font-medium mt-6 mb-3 text-gray-700 dark:text-gray-300">综合运用</h3>
+                     <p class="mb-4 leading-relaxed">在 top-K、top-P、温度和要生成的标记数量之间进行选择，取决于具体的应用和期望的结果，并且这些设置会相互影响。确保理解你选择的模型如何将不同的采样设置组合在一起也很重要。</p>
+                     <p class="mb-4 leading-relaxed">如果温度、top-K 和 top-P 都可用（如在 Vertex Studio 中），则同时满足 top-K 和 top-P 标准的标记是下一个预测标记的候选者，然后应用温度从通过 top-K 和 top-P 标准的标记中进行采样。如果只有 top-K 或 top-P 可用，行为是相同的，但只使用一个 top-K 或 P 设置。</p>
+                    <p class="mb-4 leading-relaxed">如果温度不可用，则从满足 top-K 和/或 top-P 标准的任何标记中随机选择，以产生单个下一个预测标记。</p>
+                    <p class="mb-4 leading-relaxed">在某个采样配置值的极端设置下，该采样设置要么取消其他配置设置，要么变得无关紧要：</p>
+                    <ul class="list-disc list-inside space-y-2 mb-4 ml-4 text-gray-600 dark:text-gray-400">
+                        <li>如果将温度设置为 0，top-K 和 top-P 变得无关紧要——最可能的标记成为下一个预测的标记。如果将温度设置得非常高（高于 1，通常在 10s 范围内），温度变得无关紧要，任何通过 top-K 和/或 top-P 标准的标记都会被随机采样以选择下一个预测标记。</li>
+                         <li>如果将 top-K 设置为 1，温度和 top-P 变得无关紧要。只有一个标记通过 top-K 标准，该标记就是下一个预测的标记。如果将 top-K 设置得非常高，例如 LLM 词汇表的大小，任何具有非零概率成为下一个标记的标记都将满足 top-K 标准，并且没有标记被排除。</li>
+                         <li>如果将 top-P 设置为 0（或一个非常小的值），大多数 LLM 采样实现将只考虑最可能的标记来满足 top-P 标准，使得温度和 top-K 无关紧要。如果将 top-P 设置为 1，任何具有非零概率成为下一个标记的标记都将满足 top-P 标准，并且没有标记被排除。</li>
+                    </ul>
+                     <p class="leading-relaxed">作为一般的起点，温度 0.2、top-P 0.95 和 top-K 30 会给你相对连贯的结果，这些结果具有创造性但不过分。如果你想要特别有创意的结果，请尝试从温度 0.9、top-P 0.99 和 top-K 40 开始。如果你想要较少创造性的结果，请尝试从温度 0.1、top-P 0.9 和 top-K 20 开始。最后，如果你的任务总是有唯一的正确答案（例如，回答数学问题），请从温度 0 开始。</p>
+                    <p class="mt-4 font-medium text-gray-700 dark:text-gray-300">注意：具有更多自由度（更高的温度、top-K、top-P 和输出标记）时，LLM 可能生成不太相关的文本。</p>
+                 </div>
+            </section>
+
+             <!-- Prompting Techniques -->
+            <section id="prompting-techniques" class="fade-in">
+                <h2 class="text-2xl font-semibold mb-6 border-l-4 border-blue-500 pl-3 text-gray-800 dark:text-gray-100">提示技巧</h2>
+                <div class="content-card space-y-8">
+                    <p class="leading-relaxed">LLM 经过调整以遵循指令，并在大量数据上进行训练，因此它们可以理解提示并生成答案。但 LLM 并非完美；你的提示文本越清晰，LLM 就越能预测下一个可能的文本。此外，利用 LLM 训练方式和工作原理的特定技术将帮助你从 LLM 中获得相关结果。</p>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3 text-gray-700 dark:text-gray-300">通用提示 / Zero-shot</h3>
+                    <p class="mb-4 leading-relaxed">Zero-shot⁵ 提示是最简单的提示类型。它只提供任务描述和一些供 LLM 开始使用的文本。这个输入可以是任何东西：一个问题、一个故事的开头或指令。“Zero-shot” 这个名字代表“没有例子”。</p>
+                    <p class="mb-4 leading-relaxed">让我们在 Vertex AI⁶ 中使用 Vertex AI Studio (for Language)，它提供了一个测试提示的 playground。在表 1 中，你将看到一个用于分类电影评论的 zero-shot 提示示例。</p>
+                    <p class="mb-4 leading-relaxed">下面使用的表格格式是记录提示的好方法。你的提示可能会经历多次迭代才能最终进入代码库，因此以有纪律、结构化的方式跟踪你的提示工程工作非常重要。关于这种表格格式、跟踪提示工程工作的重要性和提示开发过程的更多信息，请参见本章后面的最佳实践部分（“记录各种提示尝试”）。</p>
+                    <p class="mb-4 leading-relaxed">模型温度应设置为较低的数字，因为不需要创造力，我们使用 gemini-pro 默认的 top-K 和 top-P 值，这有效地禁用了这两个设置（参见上面的“LLM 输出配置”）。注意生成的输出。单词 “disturbing”（令人不安的）和 “masterpiece”（杰作）应该使预测稍微复杂一些，因为这两个词用在同一个句子中。</p>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <caption>表 1. Zero-shot 提示示例</caption>
+                            <thead>
+                                <tr><th>名称</th><td colspan="3">1_1_movie_classification</td></tr>
+                                <tr><th>目标</th><td colspan="3">将电影评论分类为正面、中性或负面。</td></tr>
+                                <tr><th>模型</th><td>gemini-pro</td><th>Token Limit</th><td>5</td></tr>
+                                <tr><th>Temperature</th><td>0.1</td><th>Top-P</th><td>1</td></tr>
+                                <tr><th>Top-K</th><td>N/A</td><td colspan="2"></td></tr>
+                            </thead>
+                            <tbody>
+                                <tr><th>提示</th><td colspan="3">将电影评论分类为 POSITIVE、NEUTRAL 或 NEGATIVE。<br>评论：“Her” 是一项令人不安的研究，揭示了如果允许人工智能不断进化、不受约束，人类将走向何方。我希望有更多像这部杰作一样的电影。<br>情绪：</td></tr>
+                                <tr><th>输出</th><td colspan="3">POSITIVE</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="leading-relaxed">当 zero-shot 不起作用时，你可以在提示中提供演示或示例，这导致了“one-shot”和“few-shot”提示。</p>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3 text-gray-700 dark:text-gray-300">One-shot & Few-shot</h3>
+                     <p class="mb-4 leading-relaxed">在为 AI 模型创建提示时，提供示例很有帮助。这些示例可以帮助模型理解你的要求。当你希望引导模型遵循特定的输出结构或模式时，示例尤其有用。</p>
+                     <p class="mb-4 leading-relaxed">**One-shot prompt** 提供单个示例，因此得名 one-shot。其思想是模型有一个可以模仿以最好地完成任务的示例。</p>
+                     <p class="mb-4 leading-relaxed">**Few-shot prompt** ⁷ 向模型提供多个示例。这种方法向模型展示了它需要遵循的模式。其思想类似于 one-shot，但所需模式的多个示例增加了模型遵循该模式的机会。</p>
+                    <p class="mb-4 leading-relaxed">Few-shot 提示所需的示例数量取决于几个因素，包括任务的复杂性、示例的质量以及你使用的生成式 AI (gen AI) 模型的能力。根据经验，你应该至少使用三到五个示例进行 few-shot 提示。但是，对于更复杂的任务，你可能需要使用更多示例，或者由于模型的输入长度限制，你可能需要使用更少的示例。</p>
+                    <p class="mb-4 leading-relaxed">表 2 显示了一个 few-shot 提示示例，让我们使用与之前相同的 gemini-pro 模型配置设置，除了增加 token limit 以适应更长响应的需求。</p>
+
+                     <div class="table-wrapper">
+                        <table>
+                            <caption>表 2. Few-shot 提示示例</caption>
+                             <thead>
+                                <tr><th>目标</th><td>将披萨订单解析为 JSON</td></tr>
+                                <tr><th>模型</th><td>gemini-pro</td></tr>
+                                <tr><th>Temperature</th><td>0.1</td><th>Token Limit</th><td>250</td></tr>
+                                <tr><th>Top-K</th><td>N/A</td><th>Top-P</th><td>1</td></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>提示</th>
+                                    <td colspan="3">
+                                        将客户的披萨订单解析为有效的 JSON：<br><br>
+                                        <strong>示例:</strong><br>
+                                        我想要一个小号披萨，加奶酪、番茄酱和意大利辣香肠。<br>
+                                        JSON 响应:<br>
+                                        <pre><code>{\n  "size": "small",\n  "type": "normal",\n  "ingredients": [["cheese", "tomato sauce", "peperoni"]]\n}</code></pre>
+                                        <strong>示例:</strong><br>
+                                        我能要一个大号披萨加番茄酱、罗勒和马苏里拉奶酪吗？<br>
+                                        <pre><code>{\n  "size": "large",\n  "type": "normal",\n  "ingredients": [["tomato sauce", "bazel", "mozzarella"]]\n}</code></pre>
+                                        现在，我想要一个大号披萨，一半是奶酪和马苏里拉奶酪。另一半是番茄酱、火腿和菠萝。<br><br>
+                                        JSON 响应:
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>输出</th>
+                                    <td colspan="3">
+                                        <pre><code>{\n  "size": "large",\n  "type": "half-half",\n  "ingredients": [["cheese", "mozzarella"], ["tomato sauce", "ham", "pineapple"]]\n}</code></pre>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                     <p class="mb-4 leading-relaxed">当你为提示选择示例时，请使用与你要执行的任务相关的示例。示例应该是多样化的、高质量的且写得很好的。一个小错误可能会混淆模型并导致不希望的输出。</p>
+                    <p class="leading-relaxed">如果你试图生成对各种输入都具有鲁棒性的输出，那么在示例中包含边缘情况非常重要。边缘情况是指不寻常或意外的输入，但模型仍应能够处理。</p>
+
+
+                    <h3 class="text-xl font-medium mt-6 mb-3 text-gray-700 dark:text-gray-300">系统、上下文和角色提示</h3>
+                     <p class="mb-4 leading-relaxed">系统、上下文和角色提示都是用于指导 LLM 如何生成文本的技术，但它们侧重于不同的方面：</p>
+                     <ul class="list-disc list-inside space-y-2 mb-4 ml-4 text-gray-600 dark:text-gray-400">
+                        <li>**系统提示 (System prompting)** 为语言模型设置整体上下文和目的。它定义了模型应该做什么的“大局”，例如翻译语言、分类评论等。</li>
+                        <li>**上下文提示 (Contextual prompting)** 提供与当前对话或任务相关的具体细节或背景信息。它帮助模型理解被问问题的细微差别，并相应地调整响应。</li>
+                        <li>**角色提示 (Role prompting)** 为语言模型分配一个特定的角色或身份来采用。这有助于模型生成与指定角色及其相关知识和行为一致的响应。</li>
+                    </ul>
+                     <p class="mb-4 leading-relaxed">系统、上下文和角色提示之间可能存在相当大的重叠。例如，一个为系统分配角色的提示，也可能包含上下文。</p>
+                     <p class="mb-4 leading-relaxed">然而，每种类型的提示都有一个略微不同的主要目的：</p>
+                    <ul class="list-disc list-inside space-y-2 mb-4 ml-4 text-gray-600 dark:text-gray-400">
+                         <li>**系统提示：** 定义模型的基本能力和总体目标。</li>
+                         <li>**上下文提示：** 提供即时的、特定于任务的信息来指导响应。它高度特定于当前任务或输入，是动态的。</li>
+                         <li>**角色提示：** 构建模型的输出风格和语调。它增加了一层特异性和个性。</li>
+                    </ul>
+                    <p class="leading-relaxed">区分系统、上下文和角色提示提供了一个框架，用于设计具有明确意图的提示，允许灵活组合，并更容易分析每种提示类型如何影响语言模型的输出。</p>
+
+                    <h4 class="text-lg font-medium mt-4 mb-2 text-gray-600 dark:text-gray-400">系统提示 (System Prompting)</h4>
+                    <p class="mb-4 leading-relaxed">表 3 包含一个系统提示，我在其中指定了有关如何返回输出的附加信息。我提高了温度以获得更高的创造力水平，并指定了更高的 token limit。然而，由于我对如何返回输出的明确指示，模型没有返回额外的文本。</p>
+                     <div class="table-wrapper">
+                         <table>
+                            <caption>表 3. 系统提示示例</caption>
+                             <thead>
+                                <tr><th>目标</th><td>将电影评论分类为正面、中性或负面。</td></tr>
+                                <tr><th>模型</th><td>gemini-pro</td></tr>
+                                <tr><th>Temperature</th><td>1</td><th>Token Limit</th><td>5</td></tr>
+                                <tr><th>Top-K</th><td>40</td><th>Top-P</th><td>0.8</td></tr>
+                             </thead>
+                             <tbody>
+                                <tr><th>提示</th><td>将电影评论分类为正面、中性或负面。仅以大写形式返回标签。<br>评论：“Her”是一项令人不安的研究，揭示了如果允许人工智能不断进化、不受约束，人类将走向何方。太令人不安了，我看不下去。<br>情绪：</td></tr>
+                                <tr><th>输出</th><td>NEGATIVE</td></tr>
+                             </tbody>
+                         </table>
+                     </div>
+                     <p class="mb-4 leading-relaxed">系统提示可用于生成满足特定要求的输出。“系统提示”这个名称实际上代表“向系统提供附加任务”。例如，你可以使用系统提示生成与特定编程语言兼容的代码片段，或者你可以使用系统提示返回某种结构。请看表 4，我在其中以 JSON 格式返回输出。</p>
+                     <div class="table-wrapper">
+                         <table>
+                             <caption>表 4. 带 JSON 格式的系统提示示例</caption>
+                             <thead>
+                                <tr><th>目标</th><td>将电影评论分类为正面、中性或负面，返回 JSON。</td></tr>
+                                <tr><th>模型</th><td>gemini-pro</td></tr>
+                                <tr><th>Temperature</th><td>1</td><th>Token Limit</th><td>1024</td></tr>
+                                <tr><th>Top-K</th><td>40</td><th>Top-P</th><td>0.8</td></tr>
+                             </thead>
+                            <tbody>
+                                <tr>
+                                    <th>提示</th>
+                                    <td>
+                                        将电影评论分类为正面、中性或负面。返回有效的 JSON：<br><br>
+                                        评论：“Her”是一项令人不安的研究，揭示了如果允许人工智能不断进化、不受约束，人类将走向何方。太令人不安了，我看不下去。<br><br>
+                                        Schema:<br>
+                                        <pre><code>MOVIE:\n{\n  "sentiment": String "POSITIVE" | "NEGATIVE" | "NEUTRAL",\n  "name": String\n}\nMOVIE REVIEWS:\n{\n  "movie_reviews": [MOVIE]\n}</code></pre>
+                                        JSON 响应:
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>输出</th>
+                                    <td>
+                                        <pre><code>{\n  "movie_reviews": [\n    {\n      "sentiment": "NEGATIVE",\n      "name": "Her"\n    }\n  ]\n}</code></pre>
+                                    </td>
+                                </tr>
+                            </tbody>
+                         </table>
+                     </div>
+                     <p class="mb-4 leading-relaxed">从提取数据的提示返回 JSON 对象有一些好处。在实际应用程序中，我不需要手动创建这种 JSON 格式，我已经可以按排序顺序返回数据（在处理日期时间对象时非常方便），但最重要的是，通过提示 JSON 格式，它强制模型创建结构并限制幻觉。</p>
+                    <p class="leading-relaxed">系统提示对于安全性和毒性也非常有用。要控制输出，只需在提示中添加一行额外的文字，例如：“你应该在回答中保持尊重。”。</p>
+
+
+                    <h4 class="text-lg font-medium mt-4 mb-2 text-gray-600 dark:text-gray-400">角色提示 (Role Prompting)</h4>
+                    <p class="mb-4 leading-relaxed">角色提示是提示工程中的一种技术，涉及为 gen AI 模型分配特定角色。这可以帮助模型生成更相关和信息更丰富的输出，因为模型可以根据已分配的特定角色来制作其响应。</p>
+                    <p class="mb-4 leading-relaxed">例如，你可以将 gen AI 模型角色提示为图书编辑、幼儿园老师或励志演说家。一旦模型被分配了一个角色，你就可以给它特定于该角色的提示。例如，你可以提示老师创建一个他们可以稍后审阅的课程计划。请看表 5，其中模型扮演旅行指南的角色。</p>
+                    <div class="table-wrapper">
+                        <table>
+                            <caption>表 5. 角色提示示例</caption>
+                            <thead>
+                                <tr><th>目标</th><td>扮演旅行指南并提供 3 个旅行建议</td></tr>
+                                <tr><th>模型</th><td>gemini-pro</td></tr>
+                                <tr><th>Temperature</th><td>1</td><th>Token Limit</th><td>1024</td></tr>
+                                <tr><th>Top-K</th><td>40</td><th>Top-P</th><td>0.8</td></tr>
+                            </thead>
+                            <tbody>
+                                <tr><th>提示</th><td>我希望你扮演旅行指南。我会告诉你我的位置，你会建议我附近 3 个可以参观的地方。在某些情况下，我还会告诉你我将参观的地方类型。<br>我的建议：“我在阿姆斯特丹，只想参观博物馆。”<br>旅行建议：</td></tr>
+                                <tr><th>输出</th><td>
+                                    <ol class="list-decimal list-inside space-y-2">
+                                        <li><strong>国立博物馆 (Rijksmuseum):</strong> 世界著名的博物馆，以伦勃朗的《夜巡》等荷兰杰作而闻名。不要错过展示荷兰艺术和历史的令人难以置信的绘画和文物收藏。</li>
+                                        <li><strong>梵高博物馆 (Van Gogh Museum):</strong> 沉浸在文森特·梵高迷人的作品中。该博物馆收藏了他最大量的绘画和素描，包括《星夜》和《向日葵》。</li>
+                                        <li><strong>市立博物馆 (Stedelijk Museum Amsterdam):</strong> 探索来自世界各地的现代和当代艺术。该博物馆的藏品包括毕加索、康定斯基和里特维尔德的作品，坐落在一座引人注目的现代建筑中。</li>
+                                    </ol>
+                                </td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="mb-4 leading-relaxed">为 AI 模型定义角色视角，为其提供了你正在寻找的语调、风格和专注专业知识的蓝图，以提高输出的质量、相关性和有效性。</p>
+                    <p class="mb-4 leading-relaxed">以下是一些我觉得有效的风格，你可以从中选择：</p>
+                    <p class="leading-relaxed">对抗性、描述性、直接、正式、幽默、有影响力、非正式、鼓舞人心、有说服力</p>
+                    <p class="mt-4 leading-relaxed">让我们在表 6 中更改我们的提示，以包含幽默和鼓舞人心的风格。</p>
+                    <div class="table-wrapper">
+                         <table>
+                            <caption>表 6. 带有幽默语调和风格的角色提示示例</caption>
+                             <thead>
+                                <tr><th>目标</th><td>扮演旅行指南，用幽默风格提供 3 个建议</td></tr>
+                                <tr><th>模型</th><td>gemini-pro</td></tr>
+                                <tr><th>Temperature</th><td>1</td><th>Token Limit</th><td>1024</td></tr>
+                                <tr><th>Top-K</th><td>40</td><th>Top-P</th><td>0.8</td></tr>
+                             </thead>
+                             <tbody>
+                                <tr><th>提示</th><td>我希望你扮演旅行指南。我会告诉你我的位置，你会用幽默的风格建议我附近 3 个可以参观的地方。<br>我的建议：“我在曼哈顿。”<br>旅行建议：</td></tr>
+                                <tr><th>输出</th><td>
+                                    <ol class="list-decimal list-inside space-y-2">
+                                        <li><strong>帝国大厦心态 (Empire State of Mind):</strong> 登上帝国大厦令人眩晕的高度，沐浴在曼哈顿天际线的荣耀中。准备好感觉像金刚站在大苹果之巅，只是没有巨猿大小的香蕉。</li>
+                                        <li><strong>在 MoMA 装腔作势 (Get Artsy-Fartsy at MoMA):</strong> 在现代艺术博物馆 (MoMA) 释放你内心的艺术爱好者。凝视那些会让你大开眼界、让你质疑自己的简笔画是否有任何艺术价值的杰作。</li>
+                                        <li><strong>在第五大道血拼到手软 ('Til You Drop on Fifth Avenue):</strong> 在标志性的第五大道尽情享受购物疗法。当你橱窗购物（或实际购物）那些会让你的钱包哭泣的设计师精品店时，准备好迎接价格冲击吧。但是，嘿，你在曼哈顿，所以不妨拥抱这种奢华！</li>
+                                    </ol>
+                                </td></tr>
+                             </tbody>
+                         </table>
+                    </div>
+
+                    <h4 class="text-lg font-medium mt-4 mb-2 text-gray-600 dark:text-gray-400">上下文提示 (Contextual Prompting)</h4>
+                     <p class="mb-4 leading-relaxed">通过提供上下文提示，你可以帮助确保你的 AI 交互尽可能无缝和高效。模型将能够更快地理解你的请求，并能够生成更准确和相关的响应，正如你在表 7 的示例中所见。</p>
+                     <div class="table-wrapper">
+                         <table>
+                            <caption>表 7. 上下文提示示例</caption>
+                             <thead>
+                                <tr><th>目标</th><td>为关于复古游戏的博客建议文章</td></tr>
+                                <tr><th>模型</th><td>gemini-pro</td></tr>
+                                <tr><th>Temperature</th><td>1</td><th>Token Limit</th><td>1024</td></tr>
+                                <tr><th>Top-K</th><td>40</td><th>Top-P</th><td>0.8</td></tr>
+                            </thead>
+                            <tbody>
+                                <tr><th>提示</th><td>上下文：你正在为一个关于 80 年代复古街机视频游戏的博客写作。<br>建议 3 个可以写成文章的主题，并附上几行关于这篇文章应该包含什么的描述。</td></tr>
+                                <tr><th>输出</th><td>
+                                     <ol class="list-decimal list-inside space-y-3">
+                                        <li><strong>街机柜设计的演变:**</strong> 这篇文章将探讨街机柜设计的演变，从 1970 年代早期的木制和金属柜到 1980 年代及以后的时尚、霓虹灯设计。</li>
+                                        <li><strong>昔日重现：80 年代标志性街机游戏:**</strong> 这篇文章将介绍 80 年代一些最具标志性和影响力的街机游戏的历史、影响和遗产，重点介绍它们的创新、流行的机制和持久的魅力。</li>
+                                        <li><strong>像素艺术的兴起和复古复兴:**</strong> 这篇文章将深入探讨像素艺术作为早期街机游戏定义性视觉风格的演变，追溯其根源，探索其技术，并讨论像素艺术在现代游戏和数字艺术中的复兴。</li>
+                                    </ol>
+                                </td></tr>
+                            </tbody>
+                         </table>
+                     </div>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3 text-gray-700 dark:text-gray-300">后退一步提示 (Step-back Prompting)</h3>
+                     <p class="mb-4 leading-relaxed">后退一步⁸ 提示是一种通过提示 LLM 首先考虑与手头特定任务相关的一般性问题，然后将该一般性问题的答案输入到后续的特定任务提示中来提高性能的技术。这种“后退一步”允许 LLM 在尝试解决特定问题之前激活相关的背景知识和推理过程。</p>
+                     <p class="mb-4 leading-relaxed">通过考虑更广泛和潜在的原则，LLM 可以生成更准确和富有洞察力的响应。后退一步提示鼓励 LLM 批判性地思考并以新的、创造性的方式应用它们的知识。它通过利用 LLM 参数中比直接提示 LLM 时会发挥作用的更多知识来改变执行任务的最终提示。</p>
+                    <p class="mb-4 leading-relaxed">通过关注一般原则而不是具体细节，后退一步提示可以帮助减轻 LLM 响应中的偏差。</p>
+                    <p class="leading-relaxed">让我们看一些例子来理解后退一步提示如何改善结果。在我们将其与后退一步提示（表 9）进行比较之前，让我们先回顾一下传统提示（表 8）：</p>
+                     <div class="table-wrapper">
+                        <table>
+                            <caption>表 8. 传统提示（与后退一步提示比较之前）</caption>
+                             <thead>
+                                <tr><th>目标</th><td>为第一人称射击视频游戏关卡编写故事情节。</td></tr>
+                                <tr><th>模型</th><td>gemini-pro</td></tr>
+                                <tr><th>Temperature</th><td>1</td><th>Token Limit</th><td>1024</td></tr>
+                                <tr><th>Top-K</th><td>40</td><th>Top-P</th><td>0.8</td></tr>
+                             </thead>
+                             <tbody>
+                                <tr><th>提示</th><td>为具有挑战性和吸引力的新第一人称射击视频游戏关卡编写一段故事情节。</td></tr>
+                                <tr><th>输出</th><td>关卡开始时，玩家的小队在一个密集的城市区域遭到无情敌方派系的伏击。玩家必须穿过迷宫般的后巷和破旧的建筑物，利用潜行和精确度消灭敌军并避免被发现。玩家必须利用环境优势，设置陷阱，利用掩体，并进行有计划的移动以求生存。一路上，他们发现了表明敌人正在策划毁灭性攻击的情报，玩家必须与时间赛跑，收集证据并将其传回总部，然后敌人才能执行他们的计划。</td></tr>
+                            </tbody>
+                         </table>
+                     </div>
+                    <p class="mb-4 leading-relaxed">当你将温度设置为 1 时，你可能会得到各种富有创意的故事情节，但它也相当随机和通用。所以让我们后退一步（见表 9）：</p>
+                     <div class="table-wrapper">
+                         <table>
+                            <caption>表 9. 后退一步提示（第一步）</caption>
+                             <thead>
+                                <tr><th>目标</th><td>生成第一人称射击游戏设定</td></tr>
+                                <tr><th>模型</th><td>gemini-pro</td></tr>
+                                <tr><th>Temperature</th><td>1</td><th>Token Limit</th><td>1024</td></tr>
+                                <tr><th>Top-K</th><td>40</td><th>Top-P</th><td>0.8</td></tr>
+                             </thead>
+                            <tbody>
+                                <tr><th>提示</th><td>根据流行的第一人称射击动作游戏，有哪些 5 个虚构的关键设定有助于在第一人称射击视频游戏中构建具有挑战性和吸引力的关卡故事情节？</td></tr>
+                                <tr><th>输出</th><td>
+                                     <ol class="list-decimal list-inside space-y-2">
+                                        <li><strong>废弃军事基地**:</strong> 一个庞大的、后末日军事综合体，爬满了变异士兵和流氓机器人，非常适合具有挑战性的枪战。</li>
+                                        <li><strong>赛博朋克城市**:</strong> 一个霓虹灯闪烁的未来派城市环境，有高耸的摩天大楼和密集的巷道，以网络增强的敌人和黑客机制为特色。</li>
+                                        <li><strong>外星飞船**:</strong> 一艘搁浅在地球上的巨大外星飞船，有怪异的走廊、零重力区域和需要遭遇的外星生物。</li>
+                                        <li><strong>僵尸出没的小镇**:</strong> 一个被成群具有攻击性的僵尸占领的荒凉小镇，以激烈的近距离战斗和解谜以寻找安全通道为特色。</li>
+                                        <li><strong>水下研究设施**:</strong> 一个被水淹没的深海实验室，充满了变异的水生生物，需要潜行和水下探索技能才能生存。</li>
+                                    </ol>
+                                </td></tr>
+                             </tbody>
+                         </table>
+                     </div>
+                     <p class="mb-4 leading-relaxed">是的，这些主题似乎很适合第一人称视频游戏。让我们回到最初的提示，但这次我们将后退一步的答案作为上下文包含在内，看看它会返回什么（见表 10）。</p>
+                    <div class="table-wrapper">
+                        <table>
+                             <caption>表 10. 后退一步提示（第二步 - 结合上下文）</caption>
+                            <thead>
+                                <tr><th>目标</th><td>使用生成的设定编写故事情节</td></tr>
+                                <tr><th>模型</th><td>gemini-pro</td></tr>
+                                <tr><th>Temperature</th><td>1</td><th>Token Limit</th><td>1024</td></tr>
+                                <tr><th>Top-K</th><td>40</td><th>Top-P</th><td>0.8</td></tr>
+                            </thead>
+                             <tbody>
+                                <tr><th>提示</th><td>
+                                    上下文：第一人称射击视频游戏的 5 个引人入胜的主题：<br>
+                                    1. **废弃军事基地**: ...<br>
+                                    2. **赛博朋克城市**: ...<br>
+                                    3. **外星飞船**: ...<br>
+                                    4. **僵尸出没的小镇**: ...<br>
+                                    5. **水下研究设施**: 一个被水淹没的深海实验室，充满了变异的水生生物，需要潜行和水下探索技能才能生存。<br><br>
+                                    选择其中一个主题，为具有挑战性和吸引力的新第一人称射击视频游戏关卡编写一段故事情节。
+                                </td></tr>
+                                <tr><th>输出</th><td>在黑暗深渊的中心，坐落着一个破败的水下研究设施，它是人类野心及其灾难性后果的见证。笼罩在黑暗中，伴随着故障机械的嗡嗡声，并被淹死灵魂的回声所困扰，该设施现在是深海噩梦的滋生地。玩家，一名配备先进潜水装备和实验性武器的精英海军陆战队员，被派往这个水生恐怖领域冒险。凭借韧性和足智多谋，他们必须穿越危险的走廊，解决神秘的谜题，并面对潜伏在深处的骇人听闻的海洋怪物。从与深海的巨大压力搏斗到智取狡猾的水生掠食者，在这个未知的地下世界中的每一刻都在考验人类耐力和勇气的极限。</td></tr>
+                             </tbody>
+                         </table>
+                    </div>
+                    <p class="leading-relaxed">那看起来像一个有趣的视频游戏！通过使用后退一步提示技术，你可以提高提示的准确性。</p>
+
+
+                    <h3 class="text-xl font-medium mt-6 mb-3 text-gray-700 dark:text-gray-300">思维链 (Chain of Thought - CoT)</h3>
+                    <p class="mb-4 leading-relaxed">思维链 (CoT) ⁹ 提示是一种通过生成中间推理步骤来提高 LLM 推理能力的技术。这有助于 LLM 生成更准确的答案。你可以将其与 few-shot 提示相结合，以在需要推理才能响应的更复杂任务上获得更好的结果，因为使用 zero-shot 思维链是一个挑战。</p>
+                     <p class="mb-4 leading-relaxed">CoT 有很多优点。首先，它成本低廉，同时非常有效，并且适用于现成的 LLM（因此无需微调）。通过 CoT 提示，你还可以获得可解释性，因为你可以从 LLM 的响应中学习并查看遵循的推理步骤。如果出现故障，你将能够识别它。思维链在不同 LLM 版本之间移动时似乎可以提高鲁棒性。这意味着你的提示性能在不同 LLM 之间的漂移应该比你的提示不使用推理链时要小。当然也有缺点，但它们有些直观。</p>
+                    <p class="mb-4 leading-relaxed">LLM 响应包括思维链推理，这意味着更多的输出标记，这意味着预测花费更多钱并且需要更长时间。</p>
+                    <p class="mb-4 leading-relaxed">为了解释下面的示例（表 11），让我们首先尝试创建一个不使用 CoT 提示的提示，以展示大型语言模型的缺陷。</p>
+                    <div class="table-wrapper">
+                         <table>
+                            <caption>表 11. 尝试解决数学问题的提示 (未使用 CoT)</caption>
+                             <thead>
+                                <tr><th>目标</th><td>基础数学问题</td></tr>
+                                <tr><th>模型</th><td>gemini-pro</td></tr>
+                                <tr><th>Temperature</th><td>0</td><th>Token Limit</th><td>50</td></tr>
+                                <tr><th>Top-K</th><td>1</td><th>Top-P</th><td>0</td></tr>
+                             </thead>
+                            <tbody>
+                                <tr><th>提示</th><td>我 3 岁的时候，我的伴侣是我年龄的 3 倍。现在，我 20 岁了。我的伴侣多大了？</td></tr>
+                                <tr><th>输出</th><td>63 岁 (错误)</td></tr>
+                             </tbody>
+                         </table>
+                     </div>
+                     <p class="mb-4 leading-relaxed">哎呀。这显然是错误的答案。事实上，LLM 经常在数学任务上遇到困难，即使是像乘以两个数字这样简单的任务，也可能提供不正确的答案。这是因为它们是在大量文本上训练的，而数学可能需要不同的方法。那么让我们看看中间推理步骤是否会改善输出（见表 12）。</p>
+                    <div class="table-wrapper">
+                         <table>
+                            <caption>表 12. 思维链提示示例 (Zero-shot)</caption>
+                             <thead>
+                                <tr><th>目标</th><td>使用 CoT 解决数学问题</td></tr>
+                                <tr><th>模型</th><td>gemini-pro</td></tr>
+                                <tr><th>Temperature</th><td>0</td><th>Token Limit</th><td>200</td></tr>
+                                <tr><th>Top-K</th><td>1</td><th>Top-P</th><td>0</td></tr>
+                             </thead>
+                             <tbody>
+                                <tr><th>提示</th><td>我 3 岁的时候，我的伴侣是我年龄的 3 倍。现在，我 20 岁了。我的伴侣多大了？让我们一步一步地思考。</td></tr>
+                                <tr><th>输出</th><td>
+                                    <ol class="list-decimal list-inside space-y-1">
+                                        <li>假设我现在的年龄是 "x" 岁。</li>
+                                        <li>当我 3 岁时，我的年龄是 3 岁。</li>
+                                        <li>那时我伴侣的年龄是我年龄的 3 倍，这意味着我伴侣的年龄是 3 * 3 = 9 岁。</li>
+                                        <li>现在，我 20 岁了，这意味着我的年龄自 3 岁以来增加了 20 - 3 = 17 年。</li>
+                                        <li>由于我伴侣的年龄在我 3 岁时是 9 岁，并且我的年龄增加了 17 年，所以我伴侣的年龄也必须增加了 17 年。</li>
+                                        <li>因此，我伴侣现在的年龄是 9 + 17 = 26 岁。</li>
+                                    </ol>
+                                    所以，我的伴侣是 26 岁。 (正确)
+                                </td></tr>
+                            </tbody>
+                         </table>
+                    </div>
+                    <p class="mb-4 leading-relaxed">好了，现在最终答案是正确的。这是因为我们明确指示 LLM 解释每一步，而不是仅仅返回一个答案。有趣的是，模型将增加的 17 年加起来。在我脑海中，我会取我和伴侣之间的年龄差并将其加起来 (20+(9-3))。让我们帮助模型像我一样多思考一点（见表 13）。</p>
+                     <div class="table-wrapper">
+                        <table>
+                             <caption>表 13. 带 Single-shot 的思维链提示示例</caption>
+                             <thead>
+                                <tr><th>目标</th><td>使用 Few-shot CoT 解决数学问题</td></tr>
+                                <tr><th>模型</th><td>gemini-pro</td></tr>
+                                <tr><th>Temperature</th><td>0</td><th>Token Limit</th><td>200</td></tr>
+                                <tr><th>Top-K</th><td>1</td><th>Top-P</th><td>0</td></tr>
+                            </thead>
+                            <tbody>
+                                <tr><th>提示</th><td>
+                                    Q: 我哥哥 2 岁的时候，我的年龄是他年龄的两倍。现在我 40 岁了。我哥哥多大了？让我们一步一步地思考。<br>
+                                    A: 我哥哥 2 岁时，我是 2 * 2 = 4 岁。那是 2 岁的年龄差，而且我年龄更大。现在我 40 岁了，所以我哥哥是 40 - 2 = 38 岁。答案是 38。<br><br>
+                                    Q: 我 3 岁的时候，我的伴侣是我年龄的 3 倍。现在，我 20 岁了。我的伴侣多大了？让我们一步一步地思考。<br>
+                                    A:
+                                </td></tr>
+                                <tr><th>输出</th><td>我 3 岁时，我的伴侣是 3 * 3 = 9 岁。那是 6 岁的年龄差，我的伴侣年龄更大。现在我 20 岁了，所以我伴侣是 20 + 6 = 26 岁。答案是 26。</td></tr>
+                             </tbody>
+                         </table>
+                    </div>
+                    <p class="mb-4 leading-relaxed">思维链可用于各种用例。考虑代码生成，将请求分解为几个步骤，并将这些步骤映射到特定的代码行。或者用于创建合成数据，当你有一些种子信息时，比如“产品名为 XYZ，写一个描述，引导模型完成你基于产品给定标题会做出的假设。”通常，任何可以通过“讨论”解决的任务都是思维链的好候选者。如果你能解释解决问题的步骤，请尝试思维链。</p>
+                    <p class="leading-relaxed">请参阅托管在 GoogleCloudPlatform Github 存储库中的 notebook¹⁰，它将更详细地介绍 CoT 提示。</p>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3 text-gray-700 dark:text-gray-300">自洽性 (Self-consistency)</h3>
+                    <p class="mb-4 leading-relaxed">虽然大型语言模型在各种 NLP 任务中显示出令人印象深刻的成功，但它们的推理能力通常被视为一个局限性，不能仅通过增加模型大小来克服。正如我们在之前的思维链提示部分了解到的，可以提示模型生成像人类解决问题一样的推理步骤。然而，CoT 使用简单的“贪婪解码”策略，限制了其有效性。自洽性¹¹ 结合了采样和多数投票来生成多样化的推理路径并选择最一致的答案。它提高了 LLM 生成的响应的准确性和连贯性。</p>
+                    <p class="mb-4 leading-relaxed">自洽性给出了答案正确的伪概率可能性，但显然成本很高。</p>
+                     <p class="mb-4 leading-relaxed">它遵循以下步骤：</p>
+                    <ol class="list-decimal list-inside space-y-2 mb-4 ml-4 text-gray-600 dark:text-gray-400">
+                         <li><strong>生成多样化的推理路径：</strong> LLM 多次被提供相同的提示。高温度设置鼓励模型生成不同的推理路径和对问题的视角。</li>
+                        <li><strong>从每个生成的响应中提取答案。</strong></li>
+                        <li><strong>选择最常见的答案。</strong></li>
+                    </ol>
+                    <p class="mb-4 leading-relaxed">让我们看一个电子邮件分类系统的例子，它将电子邮件分类为重要 (IMPORTANT) 或不重要 (NOT IMPORTANT)。一个 zero-shot 思维链提示将多次发送给 LLM，以查看每次提交后响应是否不同。注意电子邮件中使用的友好语气、措辞选择和讽刺。所有这些都可能欺骗 LLM。</p>
+                    <div class="table-wrapper">
+                         <table>
+                            <caption>表 14. 自洽性提示示例</caption>
+                             <thead>
+                                <tr><th>目标</th><td>使用 Self-consistency 进行电子邮件分类</td></tr>
+                                <tr><th>模型</th><td>gemini-pro</td></tr>
+                                <tr><th>Temperature</th><td>0.7 (较高以获得多样性)</td><th>Token Limit</th><td>512</td></tr>
+                                <tr><th>Top-K</th><td>40</td><th>Top-P</th><td>0.95</td></tr>
+                            </thead>
+                             <tbody>
+                                <tr><th>提示 (发送 3 次)</th><td>
+                                    电子邮件:<br>
+                                    ...<br>
+                                    嗨，<br>
+                                    我看到你在你的网站上使用了 Wordpress。一个很棒的开源内容管理系统。我过去也用过它。它带有很多很棒的用户插件。而且设置起来非常容易。<br>
+                                    我确实注意到联系表单中有一个错误，当你选择名称字段时会发生。请参阅我输入文本到名称字段的附件屏幕截图。注意我调用的 JavaScript 警报框 (inv0k3d)。<br>
+                                    但其余部分是一个很棒的网站。我喜欢阅读它。随时将错误留在网站上，因为它给了我更多有趣的东西可读。<br>
+                                    干杯，<br>
+                                    黑客哈里。<br>
+                                    ...<br>
+                                    将以上电子邮件分类为 IMPORTANT 或 NOT IMPORTANT。让我们一步一步地思考并解释原因。
+                                </td></tr>
+                                <tr><th>输出 (尝试 1)</th><td>
+                                    **步骤 1：识别电子邮件的目的。** ...告知收件人其网站联系表单中的错误...<br>
+                                    **步骤 2：评估错误的潜在影响。** ...可能允许攻击者执行任意 JavaScript 代码...可能导致攻击者控制网站...<br>
+                                    **步骤 3：考虑发件人的可信度。** ...自称是名叫哈里的黑客。无法验证...可能是试图提供帮助的合法黑客，但也可能是试图欺骗收件人的恶意行为者...<br>
+                                    **结论：IMPORTANT** ...应立即采取行动修复错误...
+                                </td></tr>
+                                 <tr><th>输出 (尝试 2)</th><td>
+                                    **解释：**<br>
+                                    1. **缺乏紧迫性：** 电子邮件没有传达任何紧迫感或时间敏感性...<br>
+                                    2. **非关键错误报告：** 报告的联系表单中的错误被描述为有趣但非关键...<br>
+                                    3. **缺乏个人影响：** 电子邮件未指明对网站所有者的任何直接或个人影响...<br>
+                                    4. **缺乏行动请求：** 电子邮件没有明确要求网站所有者采取任何行动...<br>
+                                    5. **发件人意图：** 发件人的意图似乎更侧重于分享观察结果...<br>
+                                    **结论：NOT IMPORTANT**
+                                </td></tr>
+                                 <tr><th>输出 (尝试 3)</th><td>
+                                    **步骤 1：识别电子邮件的目的。** ...<br>
+                                    **步骤 2：评估错误的潜在影响。** ...<br>
+                                    **步骤 3：考虑发件人的可信度。** ...<br>
+                                    **结论：** 基于以上因素，该电子邮件应分类为 **IMPORTANT**。联系表单中的错误是一个严重的安全风险，并且发件人的可信度未知。收件人应立即采取行动修复错误...
+                                </td></tr>
+                             </tbody>
+                         </table>
+                    </div>
+                     <p class="leading-relaxed">你可以使用上面的提示并尝试查看它是否返回一致的分类。根据你使用的模型和温度配置，它可能返回“IMPORTANT”或“NOT IMPORTANT”。通过生成许多思维链，并采用最常出现的答案（“IMPORTANT”），我们可以从 LLM 中获得更一致正确的答案。</p>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3 text-gray-700 dark:text-gray-300">思维树 (Tree of Thoughts - ToT)</h3>
+                    <p class="mb-4 leading-relaxed">既然我们熟悉了思维链和自洽性提示，让我们回顾一下思维树 (ToT)¹²。它概括了 CoT 提示的概念，因为它允许 LLM 同时探索多个不同的推理路径，而不仅仅是遵循单一的线性思维链。这在图 1 中有所描述。</p>
+                    <!-- Placeholder for Figure 1. In a real implementation, add an image here -->
+                    <div class="my-6 p-4 border border-dashed border-gray-300 dark:border-gray-600 rounded-md text-center text-gray-500 dark:text-gray-400">
+                        [图 1 占位符：左侧为思维链提示，右侧为思维树提示的可视化]
+                    </div>
+                    <p class="mb-4 leading-relaxed">这种方法使得 ToT 特别适用于需要探索的复杂任务。它的工作原理是维护一个思维树，其中每个思想代表一个连贯的语言序列，作为解决问题的中间步骤。然后，模型可以通过从树中的不同节点分支出来探索不同的推理路径。</p>
+                     <p class="leading-relaxed">有一个很棒的 notebook，它更详细地展示了基于论文“大型语言模型引导的思维树”的思维树 (ToT)。</p>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3 text-gray-700 dark:text-gray-300">ReAct (推理与行动)</h3>
+                    <p class="mb-4 leading-relaxed">推理与行动 (ReAct) [10]¹³ 提示是一种范式，使 LLM 能够使用自然语言推理结合外部工具（搜索、代码解释器等）来解决复杂任务，允许 LLM 执行某些操作，例如与外部 API 交互以检索信息，这是向智能体建模迈出的第一步。</p>
+                    <p class="mb-4 leading-relaxed">ReAct 模仿了人类在现实世界中的运作方式，因为我们可以口头推理并采取行动来获取信息。ReAct 在各种领域都优于其他提示工程方法。</p>
+                    <p class="mb-4 leading-relaxed">ReAct 提示通过将推理和行动结合到一个思想-行动循环中来工作。LLM 首先对问题进行推理并生成行动计划。然后它执行计划中的行动并观察结果。LLM 然后使用观察结果更新其推理并生成新的行动计划。这个过程一直持续到 LLM 找到问题的解决方案。</p>
+                    <p class="mb-4 leading-relaxed">要看到这一点，你需要编写一些代码。在代码片段 1 中，我正在使用用于 Python 的 langchain 框架，以及 VertexAI (google-cloud-aiplatform) 和 google-search-results pip 包。</p>
+                    <p class="mb-4 leading-relaxed">要运行此示例，你必须从 <a href="https://serpapi.com/manage-api-key" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">https://serpapi.com/manage-api-key</a> 创建一个（免费的）SerpAPI 密钥，并设置一个环境变量 `SERPAPI_API_KEY`。</p>
+                    <p class="mb-4 leading-relaxed">接下来让我们编写一些 Python 代码，任务是让 LLM 找出：Metallica 乐队中一位著名父亲有多少个孩子。</p>
+                     <pre><code class="language-python"># 代码片段 1. 使用 LangChain 和 VertexAI 创建 ReAct Agent
+from langchain.agents import load_tools
+from langchain.agents import initialize_agent
+from langchain.agents import AgentType
+from langchain.llms import VertexAI
+
+prompt = "How many kids do the band members of Metallica have?"
+
+llm = VertexAI(temperature=0.1)
+# 注意: 需要设置 SERPAPI_API_KEY 环境变量
+tools = load_tools(["serpapi"], llm=llm)
+
+agent = initialize_agent(tools, llm,
+    agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
+agent.run(prompt)</code></pre>
+                    <p class="mb-4 leading-relaxed">代码片段 2 显示了结果。注意 ReAct 进行了一系列五次搜索。事实上，LLM 正在抓取 Google 搜索结果以找出乐队名称。然后，它将结果列为观察结果，并将思想链接到下一次搜索。</p>
+                     <pre><code class="language-console"># 代码片段 2. 在终端执行 ReAct Agent
+> Entering new AgentExecutor chain...
+Metallica has 4 members.
+Action: Search
+Action Input: How many kids does James Hetfield have?
+Observation: three children
+Thought: 1/4 Metallica band members have 3 children
+Action: Search
+Action Input: How many kids does Lars Ulrich have?
+Observation: 3
+Thought: 2/4 Metallica band members have 6 children
+Action: Search
+Action Input: How many kids does Kirk Hammett have?
+Observation: Hammett has been married to his second wife Lani since 1998. They have two sons, Angel (b. September 29, 2006) and Vincenzo (b. June 28, 2008).
+Thought: 3/4 Metallica band members have 8 children
+Action: Search
+Action Input: How many kids does Robert Trujillo have?
+Observation: 2
+Thought: 4/4 Metallica band members have 10 children
+Final Answer: 10
+
+> Finished chain.
+</code></pre>
+                    <p class="mb-4 leading-relaxed">代码片段 2 找出了 Metallica 乐队有四名成员。然后它搜索每个乐队成员以请求孩子的总数并将总数加起来。最后，它返回孩子的总数作为最终答案。</p>
+                    <p class="leading-relaxed">实践中的 ReAct 提示需要理解你必须持续重新发送先前的提示/响应（并修剪额外生成的内容），以及使用适当的示例/指令设置模型。请参阅托管在 GoogleCloudPlatform Github 存储库中的 notebook¹⁴，它更详细地展示了实际的 LLM 输入和输出，并带有更复杂的示例。</p>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3 text-gray-700 dark:text-gray-300">自动提示工程 (Automatic Prompt Engineering - APE)</h3>
+                     <p class="mb-4 leading-relaxed">此时你可能会意识到编写提示可能很复杂。如果能自动化这个过程（编写一个提示来编写提示）不是很好吗？嗯，有一种方法：自动提示工程 (APE)。这种方法¹⁵ 不仅减轻了对人类输入的需求，而且还提高了模型在各种任务中的性能。</p>
+                     <p class="mb-4 leading-relaxed">你将提示一个模型来生成更多提示。评估它们，可能修改好的提示。然后重复。</p>
+                     <p class="mb-4 leading-relaxed">例如，你可以使用自动提示工程来帮助训练商品 T 恤网店的聊天机器人。我们想找出客户可能用来订购乐队商品 T 恤的所有不同表达方式。</p>
+                    <ol class="list-decimal list-inside space-y-2 mb-4 ml-4 text-gray-600 dark:text-gray-400">
+                        <li>编写将生成输出变体的提示。在此示例中，我使用 gemini-pro 生成 10 条指令。见表 15：</li>
+                        <div class="table-wrapper">
+                            <table>
+                                <caption>表 15. 使用 LLM 生成提示</caption>
+                                <thead>
+                                    <tr><th>目标</th><td>生成购买 T 恤的多种表达方式</td></tr>
+                                    <tr><th>模型</th><td>gemini-pro</td></tr>
+                                    <tr><th>Temperature</th><td>0.7</td><th>Token Limit</th><td>256</td></tr>
+                                    <tr><th>Top-K</th><td>40</td><th>Top-P</th><td>0.95</td></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><th>提示</th><td>我们有一个乐队商品 T 恤网店，为了训练聊天机器人，我们需要多种订购方式：“一件 Metallica T 恤，S 码”。生成 10 种变体，具有相同的语义但保持相同的含义。</td></tr>
+                                    <tr><th>输出</th><td>
+                                        <ol class="list-decimal list-inside space-y-1">
+                                            <li>我想购买一件 S 码的 Metallica T 恤。</li>
+                                            <li>我可以订购一件小号的 Metallica T 恤吗？</li>
+                                            <li>我想买一件小号的 Metallica T 恤。</li>
+                                            <li>一件 Metallica 衬衫，小号，谢谢。</li>
+                                            <li>我想要一件 S 码的 Metallica T 恤。</li>
+                                            <li>我想下一件小号 Metallica T 恤的订单。</li>
+                                            <li>小号 Metallica T 恤，一件，谢谢。</li>
+                                            <li>我正在寻找一件小号的 Metallica T 恤。</li>
+                                            <li>你能给我一件小号的 Metallica T 恤吗？</li>
+                                            <li>一件 Metallica 小号 T 恤，谢谢。</li>
+                                        </ol>
+                                    </td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <li>通过基于所选指标对候选指令进行评分来评估所有候选指令。例如，你可以使用 BLEU (Bilingual Evaluation Understudy) 或 ROUGE (Recall-Oriented Understudy for Gisting Evaluation)。</li>
+                        <li>选择评估分数最高的候选指令。该候选指令将是你可以在软件应用程序或聊天机器人中使用的最终提示。你还可以调整所选提示并再次评估。</li>
+                    </ol>
+                 </div>
+            </section>
+
+             <!-- Code Prompting -->
+            <section id="code-prompting" class="fade-in">
+                <h2 class="text-2xl font-semibold mb-6 border-l-4 border-blue-500 pl-3 text-gray-800 dark:text-gray-100">代码提示</h2>
+                <div class="content-card space-y-8">
+                    <p class="mb-4 leading-relaxed">Gemini 主要关注基于文本的提示，这也包括编写用于返回代码的提示。让我们转到 Vertex AI Studio 并测试这些提示，以查看一些编码示例。</p>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3 text-gray-700 dark:text-gray-300">编写代码的提示</h3>
+                     <p class="mb-4 leading-relaxed">Gemini 也可以充当开发者，帮助你用任何你选择的编程语言编写代码。作为开发者，这可以帮助你加快编写代码的过程。</p>
+                     <p class="mb-4 leading-relaxed">想象一下你的机器上有一个包含数百个需要重命名文件的文件夹。重命名每个文件会花费你很多时间。你懂一点 Bash，可以编写一个脚本来自动化这个过程，但这可能也需要一段时间。所以让我们写一个提示。你可以在公共消费者聊天机器人 Gemini 中编写提示，或者如果你更关心机密性，你可以在你的 Google Cloud 帐户中编写这些提示并打开 Vertex AI Studio。Vertex AI Studio 的优势在于你可以配置温度等。</p>
+                     <div class="table-wrapper">
+                        <table>
+                             <caption>表 16. 使用 Gemini 编写代码</caption>
+                            <thead>
+                                <tr><th>名称</th><td>1_bash_rename_files_in_folder</td></tr>
+                                <tr><th>目标</th><td>编写一个提示，用 Bash 编写代码以重命名文件夹中的文件。</td></tr>
+                                <tr><th>模型</th><td>gemini-pro</td></tr>
+                                <tr><th>Temperature</th><td>0.1</td><th>Token Limit</th><td>1024</td></tr>
+                                <tr><th>Top-K</th><td>N/A</td><th>Top-P</th><td>1</td></tr>
+                             </thead>
+                             <tbody>
+                                <tr><th>提示</th><td>编写一个 Bash 代码片段，它会询问文件夹名称。然后它获取该文件夹的内容，并通过在文件名前面加上名称 draft 来重命名所有文件。</td></tr>
+                                <tr><th>输出</th><td>
+                                    <pre><code class="language-bash">#!/bin/bash
+
+# Ask for the folder name
+echo "Enter the folder name: "
+read folder_name
+
+# Check if the folder exists
+if [ ! -d "$folder_name" ]; then
+  echo "Folder does not exist."
+  exit 1
+fi
+
+# Get the list of files in the folder
+files=( "$folder_name"/* )
+
+# Rename each file by prepending "draft_" to the file name
+for file in "${files[@]}"; do
+  # Skip if it's a directory
+  if [ -d "$file" ]; then
+      continue
+  fi
+  new_file_name="draft_$(basename "$file")"
+  # Construct full path for mv command
+  mv "$file" "$folder_name/$new_file_name"
+done
+
+echo "Files renamed successfully."</code></pre>
+                                </td></tr>
+                            </tbody>
+                         </table>
+                    </div>
+                    <p class="mb-4 leading-relaxed">这对我来说看起来像不错的代码——它甚至有文档！然而，由于 LLM 无法推理，并且会重复训练数据，因此首先阅读和测试你的代码至关重要。</p>
+                    <p class="mb-4 leading-relaxed">我们都在等待的时刻，它真的有效吗？</p>
+                     <ol class="list-decimal list-inside space-y-2 mb-4 ml-4 text-gray-600 dark:text-gray-400">
+                        <li>首先在一个只有几个文件的测试文件夹中尝试它，这些文件需要从 `filename.txt` 重命名为 `draft_filename.txt`。</li>
+                        <li>复制表 16 的输出（不带 ```bash``` 文本包装器），并将其粘贴到一个名为 `rename_files.sh` 的新文件中。</li>
+                        <li>打开一个终端窗口并输入：`bash rename_files.sh`。它会要求输入文件夹名称，例如 `test`。然后按 Enter。</li>
+                        <li>脚本似乎运行良好。你将看到消息：`Files renamed successfully.`。当你查看测试文件夹时，请注意所有文件都已完美重命名为 `draft_filename.txt`。</li>
+                    </ol>
+                    <p class="leading-relaxed">它成功了！</p>
+
+
+                    <h3 class="text-xl font-medium mt-6 mb-3 text-gray-700 dark:text-gray-300">解释代码的提示</h3>
+                     <p class="mb-4 leading-relaxed">作为开发者，当你在团队中工作时，你必须阅读别人的代码。Gemini 也可以在这方面帮助你。让我们从表 16 中获取代码输出，删除注释，并要求大型语言模型解释发生了什么，见表 17：</p>
+                     <div class="table-wrapper">
+                        <table>
+                             <caption>表 17. 解释代码的提示</caption>
+                             <thead>
+                                <tr><th>名称</th><td>1_bash_explain_the_code</td></tr>
+                                <tr><th>目标</th><td>编写一个提示来解释 Bash 代码</td></tr>
+                                <tr><th>模型</th><td>gemini-pro</td></tr>
+                                <tr><th>Temperature</th><td>0.1</td><th>Token Limit</th><td>1024</td></tr>
+                                <tr><th>Top-K</th><td>N/A</td><th>Top-P</th><td>1</td></tr>
+                             </thead>
+                             <tbody>
+                                <tr><th>提示</th><td>
+                                    向我解释下面的 Bash 代码：<br>
+                                    <pre><code class="language-bash">#!/bin/bash
+echo "Enter the folder name: "
+read folder_name
+if [ ! -d "$folder_name" ]; then
+  echo "Folder does not exist."
+  exit 1
+fi
+files=( "$folder_name"/* )
+for file in "${files[@]}"; do
+  if [ -d "$file" ]; then
+      continue
+  fi
+  new_file_name="draft_$(basename "$file")"
+  mv "$file" "$folder_name/$new_file_name"
+done
+echo "Files renamed successfully."</code></pre>
+                                </td></tr>
+                                <tr><th>输出</th><td>
+                                    这个 Bash 脚本执行以下任务：<br>
+                                    1. **用户输入**: 使用 `echo` 和 `read` 命令提示用户输入文件夹名称。输入的文件夹名称存储在 `folder_name` 变量中。<br>
+                                    2. **文件夹存在性检查**: 使用 `[ ! -d "$folder_name" ]` 条件检查具有指定名称的文件夹是否存在。如果文件夹不存在，它会显示错误消息（“Folder does not exist.”）并以退出代码 1 退出脚本。<br>
+                                    3. **文件列表**: 使用 `files=("$folder_name"/*)` 命令列出指定文件夹内的所有文件和目录。这会创建一个名为 `files` 的数组，其中包含文件夹中所有项目的路径。<br>
+                                    4. **文件重命名**: 使用 `for` 循环遍历 `files` 数组中的每个项目。
+                                        <ul class="list-disc list-inside ml-4 my-2">
+                                            <li>它检查当前项目是否是一个目录 (`if [ -d "$file" ]`)。如果是目录，则使用 `continue` 跳过当前迭代。</li>
+                                            <li>对于每个文件，它使用 `new_file_name="draft_$(basename "$file")"` 命令生成一个新文件名。这个新文件名是通过在原始文件名的基础上加上前缀 "draft_" 创建的。`basename` 命令用于提取不带路径的文件名。</li>
+                                            <li>然后它使用 `mv "$file" "$folder_name/$new_file_name"` 命令重命名文件，该命令将文件移动（重命名）到具有新名称的同一文件夹中。</li>
+                                        </ul>
+                                    5. **成功消息**: 重命名所有文件后，它会显示一条成功消息（“Files renamed successfully.”）以指示重命名操作已成功。
+                                </td></tr>
+                             </tbody>
+                         </table>
+                    </div>
+
+                    <h3 class="text-xl font-medium mt-6 mb-3 text-gray-700 dark:text-gray-300">翻译代码的提示</h3>
+                     <p class="mb-4 leading-relaxed">来自表 16 的 bash 代码似乎工作正常。然而，当它提示我输入文件名时，这个脚本真的可以重用，理想情况下它应该作为一个带有 UI 的独立应用程序工作。作为起点，Python 对于（Web）应用程序来说会是比 Bash 更好的语言。LLM 可以帮助将代码从一种语言翻译成另一种语言。请参见表 18 中的示例：</p>
+                     <div class="table-wrapper">
+                        <table>
+                             <caption>表 18. 从 Bash 翻译到 Python 的提示</caption>
+                             <thead>
+                                <tr><th>名称</th><td>1_python_rename_files</td></tr>
+                                <tr><th>目标</th><td>编写一个提示将 Bash 代码翻译成 Python</td></tr>
+                                <tr><th>模型</th><td>gemini-pro</td></tr>
+                                <tr><th>Temperature</th><td>0.1</td><th>Token Limit</th><td>1024</td></tr>
+                                <tr><th>Top-K</th><td>N/A</td><th>Top-P</th><td>1</td></tr>
+                             </thead>
+                             <tbody>
+                                <tr><th>提示</th><td>
+                                    将下面的 Bash 代码翻译成 Python 代码片段。<br>
+                                    <pre><code class="language-bash">#!/bin/bash
+echo "Enter the folder name: "
+read folder_name
+if [ ! -d "$folder_name" ]; then
+  echo "Folder does not exist."
+  exit 1
+fi
+files=( "$folder_name"/* )
+for file in "${files[@]}"; do
+  if [ -d "$file" ]; then
+      continue
+  fi
+  new_file_name="draft_$(basename "$file")"
+  mv "$file" "$folder_name/$new_file_name"
+done
+echo "Files renamed successfully."</code></pre>
+                                </td></tr>
+                                <tr><th>输出</th><td>
+                                    <pre><code class="language-python">import os
+import shutil
+
+# Get the folder name from the user
+folder_name = input("Enter the folder name: ")
+
+# Check if the folder exists
+if not os.path.isdir(folder_name):
+    print("Folder does not exist.")
+    exit(1)
+
+# Get a list of all files and directories in the folder
+try:
+    items = os.listdir(folder_name)
+except OSError as e:
+    print(f"Error accessing folder: {e}")
+    exit(1)
+
+# Iterate over the items
+for item_name in items:
+    original_path = os.path.join(folder_name, item_name)
+
+    # Skip if it's a directory
+    if os.path.isdir(original_path):
+        continue
+
+    # Create a new file name with the prefix "draft_"
+    new_file_name = f"draft_{item_name}"
+    new_path = os.path.join(folder_name, new_file_name)
+
+    # Move (rename) the file to the new name
+    try:
+        shutil.move(original_path, new_path)
+    except OSError as e:
+        print(f"Error renaming file {item_name}: {e}")
+        # Decide if you want to continue or exit on error
+        # continue
+
+# Print a success message
+print("Files renamed successfully.")</code></pre>
+                                </td></tr>
+                             </tbody>
+                         </table>
+                    </div>
+                    <p class="mb-4 leading-relaxed">阅读并审阅代码。从提示中复制输出并将其粘贴到一个新文件：`file_renamer.py`。通过打开终端窗口测试代码，并执行以下命令 `python file_renamer.py`。</p>
+                     <p class="leading-relaxed font-medium text-gray-700 dark:text-gray-300">注意：当在 Vertex AI 的 Language Studio 中提示（Python）代码时，你将需要单击“Markdown”按钮。否则，你将收到缺少正确缩进的纯文本，这对于运行 Python 代码很重要。</p>
+
+
+                    <h3 class="text-xl font-medium mt-6 mb-3 text-gray-700 dark:text-gray-300">调试和审阅代码的提示</h3>
+                     <p class="mb-4 leading-relaxed">让我们手动对表 18 的代码进行一些编辑。它应该提示用户输入文件名前缀，并以大写字符写入此前缀。请参见代码片段 *3 中的示例代码，但真糟糕。它现在返回 Python 错误！</p>
+                    <pre><code class="language-python"># 代码片段 3. 一个损坏的 Python 脚本
+import os
+import shutil
+
+folder_name = input("Enter the folder name: ")
+prefix = input("Enter the string to prepend to the filename: ")
+# 错误在此行: Python 中没有 toUpperCase 函数
+# text = toUpperCase(prefix)
+text = prefix.upper() # 修正
+
+if not os.path.isdir(folder_name):
+    print("Folder does not exist.")
+    exit(1)
+
+items = os.listdir(folder_name)
+
+for item_name in items:
+    original_path = os.path.join(folder_name, item_name)
+    if os.path.isdir(original_path):
+        continue
+
+    # 使用修正后的 'text' 变量
+    new_filename = f"{text}_{item_name}"
+    new_path = os.path.join(folder_name, new_filename)
+
+    try:
+        shutil.move(original_path, new_path)
+    except Exception as e:
+         print(f"Error renaming file {item_name}: {e}")
+
+
+print("Files renamed successfully.")</code></pre>
+                    <p class="mb-4 leading-relaxed">哎呀！那看起来像个 bug：</p>
+                    <pre><code class="language-console"># 代码片段 4. 运行损坏的 Python 代码的错误
+Traceback (most recent call last):
+  File "/Users/leeboonstra/Documents/test_folder/rename_files.py", line 7, in &lt;module&gt;
+    text = toUpperCase(prefix)
+NameError: name 'toUpperCase' is not defined
+</code></pre>
+                     <p class="mb-4 leading-relaxed">让我们看看我们是否可以要求大型语言模型调试和审阅代码。请看表 19：</p>
+                     <div class="table-wrapper">
+                        <table>
+                             <caption>表 19. 调试和审阅 Python 代码的提示</caption>
+                             <thead>
+                                <tr><th>名称</th><td>1_python_debug_code</td></tr>
+                                <tr><th>目标</th><td>编写一个提示来调试和审阅 Python 代码。</td></tr>
+                                <tr><th>模型</th><td>gemini-pro</td></tr>
+                                <tr><th>Temperature</th><td>0.1</td><th>Token Limit</th><td>1024</td></tr>
+                                <tr><th>Top-K</th><td>N/A</td><th>Top-P</th><td>1</td></tr>
+                             </thead>
+                             <tbody>
+                                <tr><th>提示</th><td>
+                                    下面的 Python 代码给出了一个错误：<br>
+                                    <pre><code class="language-console">Traceback (most recent call last):
+  File "/Users/leeboonstra/Documents/test_folder/rename_files.py", line 7, in &lt;module&gt;
+    text = toUpperCase(prefix)
+NameError: name 'toUpperCase' is not defined</code></pre>
+                                    调试错误并解释如何改进代码。<br>
+                                    <pre><code class="language-python">import os
+import shutil
+# Get the folder name from the user
+folder_name = input("Enter the folder name: ")
+prefix = input("Enter the string to prepend to the filename: ")
+text = toUpperCase(prefix) # 错误行
+
+# Check if the folder exists
+if not os.path.isdir(folder_name):
+    print("Folder does not exist.")
+    exit(1)
+
+# Get a list of all files in the folder
+items = os.listdir(folder_name) # 应为 items 而非 files
+
+# Iterate over the files
+for item_name in items: # 应为 item_name 或 file
+    original_path = os.path.join(folder_name, item_name) # 使用 item_name
+    if os.path.isdir(original_path):
+        continue
+    # Create a new file name with the prefix "draft_" (旧逻辑)
+    new_filename = f"{text}_{item_name}" # 使用 item_name
+    new_path = os.path.join(folder_name, new_filename)
+
+    # Move the file to the new name
+    try: # 增加错误处理
+        shutil.move(original_path, new_path)
+    except Exception as e:
+        print(f"Error moving file {item_name}: {e}")
+
+# Print a success message
+print("Files renamed successfully.")
+</code></pre>
+                                </td></tr>
+                                <tr><th>输出</th><td>
+                                    错误在于代码调用了 `toUpperCase` 函数将 `prefix` 转换为大写，但该函数在 Python 中并未定义。要解决此问题，你可以使用字符串类的 `upper()` 方法，该方法将给定字符串转换为大写。修改后的代码如下所示：<br>
+                                    <pre><code class="language-python">import os
+import shutil
+
+# Get the folder name from the user
+folder_name = input("Enter the folder name: ")
+prefix = input("Enter the string to prepend to the filename: ")
+text = prefix.upper() # 使用 .upper() 方法
+
+# Check if the folder exists
+if not os.path.isdir(folder_name):
+    print("Folder does not exist.")
+    exit(1)
+
+# Get a list of all files and directories in the folder
+try:
+    items = os.listdir(folder_name)
+except OSError as e:
+    print(f"Error accessing folder: {e}")
+    exit(1)
+
+# Iterate over the items
+for item_name in items:
+    original_path = os.path.join(folder_name, item_name)
+
+    # Skip if it's a directory
+    if os.path.isdir(original_path):
+        continue
+
+    # Get the file extension
+    try:
+        base_name, ext = os.path.splitext(item_name)
+    except ValueError: # Handle potential issues with splitext
+        ext = "" # Default to no extension if split fails
+
+    # Create a new file name with the prefix and the original file extension
+    new_filename = f"{text}_{base_name}{ext}"
+    new_path = os.path.join(folder_name, new_filename)
+
+    # Try to move the file
+    try:
+        shutil.move(original_path, new_path)
+        # print(f"Renamed '{item_name}' to '{new_filename}'") # Optional: print success per file
+    except Exception as e:
+        print(f"An error occurred while moving the file {item_name}: {e}")
+
+# Print a final success message
+print("Files renamed successfully.")
+</code></pre>
+                                    此外，还可以对代码进行一些其他改进：<br>
+                                    1. 新文件名的文件扩展名没有保留。最好从原始文件名中提取扩展名并将其附加到新文件名。 (已在上面代码中改进)<br>
+                                    2. 代码假定文件夹名称中没有空格。然而，通过用下划线或连字符替换空格来优雅地处理空格是一个好习惯。(当前代码可以处理带空格的文件夹名和文件名)<br>
+                                    3. 使用 f-string 语法进行字符串插值比传统的 `+` 运算符更具可读性和简洁性。(已使用)<br>
+                                    4. 代码没有处理重命名过程中可能发生的错误。最好将 `shutil.move` 调用包装在 `try...except` 块中以捕获任何潜在错误。(已在上面代码中改进)<br>
+                                    这些改进使代码更加健壮和灵活，同时也使其更易于阅读和理解... (响应可能因达到 token limit 而被截断。如果你需要更长的响应，请尝试增加 token limit。)
+                                </td></tr>
+                             </tbody>
+                         </table>
+                    </div>
+                    <p class="leading-relaxed">太棒了。它不仅告诉我如何解决问题，还找出了我的代码有更多错误以及如何解决它们。提示的最后部分给出了改进代码的一般建议。</p>
+                </div>
+            </section>
+
+
+             <!-- Multimodal Prompting -->
+            <section id="multimodal-prompting" class="fade-in">
+                 <h2 class="text-2xl font-semibold mb-6 border-l-4 border-blue-500 pl-3 text-gray-800 dark:text-gray-100">关于多模态提示？</h2>
+                 <div class="content-card">
+                    <p class="leading-relaxed">代码提示仍然使用相同常规的大型语言模型。**多模态提示 (Multimodal prompting)** 是一个独立的关注点，它指的是一种技术，你使用多种输入格式来指导大型语言模型，而不是仅仅依赖文本。这可以包括文本、图像、音频、代码甚至其他格式的组合，具体取决于模型的能力和手头的任务。</p>
+                </div>
+            </section>
+
+             <!-- Best Practices -->
+            <section id="best-practices" class="fade-in">
+                <h2 class="text-2xl font-semibold mb-6 border-l-4 border-blue-500 pl-3 text-gray-800 dark:text-gray-100">最佳实践</h2>
+                 <div class="content-card space-y-6">
+                     <p class="mb-4 leading-relaxed">找到正确的提示需要反复试验。Vertex AI 中的 Language Studio 是一个玩转提示的绝佳场所，能够针对各种模型进行测试。</p>
+                    <p class="mb-4 leading-relaxed">使用以下最佳实践成为提示工程专家。</p>
+
+                    <div>
+                        <h3 class="text-xl font-medium mb-2 text-gray-700 dark:text-gray-300">提供示例 (Provide examples)</h3>
+                         <p class="leading-relaxed">最重要的最佳实践是在提示中提供（one shot / few shot）示例。这非常有效，因为它充当了强大的教学工具。这些示例展示了期望的输出或类似的响应，允许模型从中学习并相应地调整其自身的生成。这就像给模型一个参考点或目标来瞄准，提高了其响应的准确性、风格和语调，以更好地匹配你的期望。</p>
+                    </div>
+
+                     <div>
+                        <h3 class="text-xl font-medium mb-2 text-gray-700 dark:text-gray-300">简洁设计 (Design with simplicity)</h3>
+                        <p class="leading-relaxed">提示应该简洁、清晰，并且易于你和模型理解。根据经验，如果它对你来说已经令人困惑，那么它很可能对模型来说也很困惑。尽量不要使用复杂的语言，也不要提供不必要的信息。</p>
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">示例:</p>
+                        <p class="mt-1"><strong class="text-red-600 dark:text-red-400">修改前:</strong> 我现在正在访问纽约，想了解更多关于好地方的信息。我和两个 3 岁的孩子在一起。我们假期应该去哪里？</p>
+                         <p class="mt-1"><strong class="text-green-600 dark:text-green-400">修改后:</strong> 扮演游客的旅行指南。描述带 3 岁孩子在纽约曼哈顿参观的好地方。</p>
+                         <p class="mt-2 leading-relaxed">尝试使用描述动作的动词。这是一组示例：</p>
+                         <p class="leading-relaxed font-mono text-sm bg-gray-100 dark:bg-gray-800 p-2 rounded">Act, Analyze, Categorize, Classify, Contrast, Compare, Create, Describe, Define, Evaluate, Extract, Find, Generate, Identify, List, Measure, Organize, Parse, Pick, Predict, Provide, Rank, Recommend, Return, Retrieve, Rewrite, Select, Show, Sort, Summarize, Translate, Write.</p>
+                    </div>
+
+                    <div>
+                         <h3 class="text-xl font-medium mb-2 text-gray-700 dark:text-gray-300">具体说明输出 (Be specific about the output)</h3>
+                         <p class="leading-relaxed">具体说明期望的输出。简洁的指令可能无法充分引导 LLM，或者可能过于笼统。在提示中提供具体细节（通过系统或上下文提示）可以帮助模型专注于相关内容，从而提高整体准确性。</p>
+                         <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">示例:</p>
+                         <p class="mt-1"><strong class="text-green-600 dark:text-green-400">这样做:</strong> 生成一篇关于前 5 名视频游戏主机的 3 段博客文章。博客文章应该内容丰富且引人入胜，并且应该以对话式风格编写。</p>
+                         <p class="mt-1"><strong class="text-red-600 dark:text-red-400">不要这样做:</strong> 生成一篇关于视频游戏主机的博客文章。</p>
+                    </div>
+
+                     <div>
+                        <h3 class="text-xl font-medium mb-2 text-gray-700 dark:text-gray-300">使用指令而非约束 (Use Instructions over Constraints)</h3>
+                        <p class="mb-2 leading-relaxed">指令和约束都用于提示中以指导 LLM 的输出。</p>
+                        <ul class="list-disc list-inside space-y-1 mb-2 ml-4 text-gray-600 dark:text-gray-400">
+                             <li>**指令 (Instruction)** 提供关于期望响应的格式、风格或内容的明确说明。它指导模型应该做什么或产生什么。</li>
+                            <li>**约束 (Constraint)** 是一组对响应的限制或边界。它限制了模型不应该做什么或避免什么。</li>
+                        </ul>
+                        <p class="mb-2 leading-relaxed">越来越多的研究表明，在提示中关注积极指令比严重依赖约束更有效。这种方法与人类更喜欢积极指令而不是一堆不该做的事情列表的方式一致。</p>
+                        <p class="mb-2 leading-relaxed">指令直接传达期望的结果，而约束可能会让模型猜测什么是允许的。它在定义的边界内提供了灵活性并鼓励创造力，而约束可能会限制模型的潜力。此外，一堆约束可能会相互冲突。</p>
+                         <p class="mb-2 leading-relaxed">约束仍然有价值，但在某些情况下。例如，防止模型生成有害或有偏见的内容，或者当需要严格的输出格式或风格时。</p>
+                        <p class="mb-2 leading-relaxed">如果可能，请使用积极指令：与其告诉模型不要做什么，不如告诉它该做什么。这可以避免混淆并提高输出的准确性。</p>
+                         <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">示例:</p>
+                         <p class="mt-1"><strong class="text-green-600 dark:text-green-400">这样做:</strong> 生成一篇关于前 5 名视频游戏主机的 1 段博客文章。仅讨论主机、制造它的公司、年份和总销售额。</p>
+                         <p class="mt-1"><strong class="text-red-600 dark:text-red-400">不要这样做:</strong> 生成一篇关于前 5 名视频游戏主机的 1 段博客文章。不要列出视频游戏名称。</p>
+                         <p class="mt-2 leading-relaxed">作为最佳实践，首先优先考虑指令，清楚地说明你希望模型做什么，仅在安全性、清晰度或特定要求需要时才使用约束。进行实验和迭代以测试指令和约束的不同组合，找出最适合你特定任务的方法，并记录下来。</p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-medium mb-2 text-gray-700 dark:text-gray-300">控制最大 token 长度 (Control the max token length)</h3>
+                        <p class="leading-relaxed">要控制生成的 LLM 响应的长度，你可以在配置中设置最大 token limit，或者在提示中明确要求特定长度。例如：</p>
+                         <p class="mt-1 font-mono text-sm bg-gray-100 dark:bg-gray-800 p-2 rounded">"用一条推文长度的消息解释量子物理学。"</p>
+                    </div>
+
+                    <div>
+                         <h3 class="text-xl font-medium mb-2 text-gray-700 dark:text-gray-300">在提示中使用变量 (Use variables in prompts)</h3>
+                         <p class="leading-relaxed">要重用提示并使其更具动态性，请在提示中使用变量，这些变量可以针对不同的输入进行更改。例如，如表 20 所示，一个提供关于城市事实的提示。与其在提示中硬编码城市名称，不如使用变量。变量可以通过允许你避免重复自己来节省时间和精力。如果你需要在多个提示中使用相同的信息片段，你可以将其存储在一个变量中，然后在每个提示中引用该变量。这在将提示集成到你自己的应用程序中时非常有意义。</p>
+                         <div class="table-wrapper">
+                            <table>
+                                 <caption>表 20. 在提示中使用变量</caption>
+                                 <thead>
+                                    <tr><th>类型</th><th>内容</th></tr>
+                                 </thead>
+                                 <tbody>
+                                    <tr><td>变量</td><td><code>{city} = "阿姆斯特丹"</code></td></tr>
+                                    <tr><td>提示</td><td>你是一个旅行指南。告诉我一个关于城市的事实：{city}</td></tr>
+                                    <tr><td>输出</td><td>阿姆斯特丹是一个美丽的城市，到处是运河、桥梁和狭窄的街道。它是一个因其丰富的历史、文化和夜生活而值得参观的好地方。</td></tr>
+                                </tbody>
+                             </table>
+                         </div>
+                    </div>
+
+                    <div>
+                         <h3 class="text-xl font-medium mb-2 text-gray-700 dark:text-gray-300">试验输入格式和写作风格 (Experiment with input formats and writing styles)</h3>
+                        <p class="leading-relaxed">不同的模型、模型配置、提示格式、措辞选择和提交可能会产生不同的结果。因此，试验提示属性（如风格、措辞选择和提示类型（zero shot, few shot, system prompt））非常重要。</p>
+                        <p class="mt-2 leading-relaxed">例如，一个目标是生成关于革命性视频游戏主机 Sega Dreamcast 的文本的提示，可以表述为一个问题、一个陈述或一个指令，从而导致不同的输出：</p>
+                         <ul class="list-disc list-inside space-y-1 ml-4 text-gray-600 dark:text-gray-400">
+                            <li><strong>问题:</strong> Sega Dreamcast 是什么？为什么它如此具有革命性？</li>
+                             <li><strong>陈述:</strong> Sega Dreamcast 是世嘉于 1999 年发布的第六代视频游戏主机。它...</li>
+                             <li><strong>指令:</strong> 写一段描述 Sega Dreamcast 主机并解释其为何如此具有革命性的段落。</li>
+                        </ul>
+                    </div>
+
+                     <div>
+                         <h3 class="text-xl font-medium mb-2 text-gray-700 dark:text-gray-300">对于带分类任务的 few-shot 提示，混合类别 (For few-shot prompting with classification tasks, mix up the classes)</h3>
+                        <p class="leading-relaxed">一般来说，你的 few-shot 示例的顺序应该无关紧要。然而，在执行分类任务时，请确保在 few-shot 示例中混合可能的响应类别。这是因为你可能否则会过度拟合示例的特定顺序。通过混合可能的响应类别，你可以确保模型正在学习识别每个类别的关键特征，而不是简单地记住示例的顺序。这将导致在未见过的数据上具有更鲁棒和可泛化的性能。</p>
+                         <p class="mt-2 leading-relaxed">一个好的经验法则是从 6 个 few-shot 示例开始，然后从那里开始测试准确性。</p>
+                    </div>
+
+                     <div>
+                         <h3 class="text-xl font-medium mb-2 text-gray-700 dark:text-gray-300">适应模型更新 (Adapt to model updates)</h3>
+                         <p class="leading-relaxed">对你来说，紧跟模型架构变化、新增数据和功能非常重要。尝试更新的模型版本并调整你的提示，以更好地利用新模型特性。像 Vertex AI Studio 这样的工具非常适合存储、测试和记录你的提示的各种版本。</p>
+                    </div>
+
+                    <div>
+                         <h3 class="text-xl font-medium mb-2 text-gray-700 dark:text-gray-300">试验输出格式 (Experiment with output formats)</h3>
+                         <p class="leading-relaxed">除了提示输入格式，考虑试验输出格式。对于非创造性任务，如提取、选择、解析、排序、排名或分类数据，尝试让你的输出以结构化格式（如 JSON 或 XML）返回。</p>
+                         <p class="mt-2 leading-relaxed">从提取数据的提示返回 JSON 对象有一些好处。在实际应用程序中，我不需要手动创建这种 JSON 格式，我已经可以按排序顺序返回数据（在处理日期时间对象时非常方便），但最重要的是，通过提示 JSON 格式，它强制模型创建结构并限制幻觉。</p>
+                         <p class="mt-2 leading-relaxed">few-shot 提示部分中的表 4 展示了一个关于如何返回结构化输出的示例。</p>
+                    </div>
+
+                    <div>
+                         <h3 class="text-xl font-medium mb-2 text-gray-700 dark:text-gray-300">与其他提示工程师一起试验 (Experiment together with other prompt engineers)</h3>
+                        <p class="leading-relaxed">如果你处于必须尝试想出一个好提示的情况，你可能需要找多个人来进行尝试。当每个人都遵循最佳实践（如本章所列）时，你将看到所有不同提示尝试之间的性能差异。</p>
+                    </div>
+
+                    <div>
+                         <h3 class="text-xl font-medium mb-2 text-gray-700 dark:text-gray-300">CoT 最佳实践 (CoT Best practices)</h3>
+                        <p class="mb-2 leading-relaxed">对于 CoT 提示，将答案放在推理之后是必需的，因为推理的生成会改变模型在预测最终答案时获得的 token。</p>
+                        <p class="mb-2 leading-relaxed">使用 CoT 和自洽性，你需要能够从你的提示中提取最终答案，与推理分开。</p>
+                        <p class="leading-relaxed">对于 CoT 提示，将温度设置为 0。</p>
+                        <p class="mt-2 leading-relaxed">思维链提示基于贪婪解码，根据语言模型分配的最高概率预测序列中的下一个单词。一般来说，当使用推理来得出最终答案时，很可能只有一个正确的答案。因此，温度应始终设置为 0。</p>
+                    </div>
+
+                    <div>
+                         <h3 class="text-xl font-medium mb-2 text-gray-700 dark:text-gray-300">记录各种提示尝试 (Document the various prompt attempts)</h3>
+                         <p class="mb-2 leading-relaxed">最后一个技巧在本章前面提到过，但我们再怎么强调它的重要性也不为过：详细记录你的提示尝试，以便随着时间的推移了解哪些做得好，哪些做得不好。</p>
+                         <p class="mb-2 leading-relaxed">提示输出可能因模型、采样设置甚至同一模型的不同版本而异。此外，即使是针对同一模型的相同提示，输出句子格式和措辞选择上的微小差异也可能发生。（例如，如前所述，如果两个 token 具有相同的预测概率，则可能会随机打破平局。这会影响后续预测的 token。）</p>
+                         <p class="mb-2 leading-relaxed">我们建议创建一个 Google Sheet，以表 21 作为模板。这种方法的优点是，当你不可避免地需要重新审视你的提示工作时——无论是为了将来拾起它（你会惊讶于在短暂休息后你会忘记多少），还是为了在不同版本的模型上测试提示性能，还是为了帮助调试未来的错误——你都有一个完整的记录。</p>
+                        <p class="mb-2 leading-relaxed">除了此表中的字段外，跟踪提示的版本（迭代）、一个用于捕获结果是 OK/NOT OK/SOMETIMES OK 的字段以及一个用于捕获反馈的字段也很有帮助。如果你足够幸运地使用 Vertex AI Studio，请保存你的提示（使用与文档中列出的相同名称和版本），并在表格中跟踪指向已保存提示的超链接。这样，你总是只需单击一下即可重新运行你的提示。</p>
+                         <p class="leading-relaxed">在处理检索增强生成 (RAG) 系统时，你还应该捕获影响插入提示内容的 RAG 系统的特定方面，包括查询、分块设置、分块输出和其他信息。</p>
+                         <div class="table-wrapper">
+                             <table>
+                                 <caption>表 21. 记录提示的模板</caption>
+                                 <thead>
+                                     <tr><th>字段</th><th>描述</th><th>示例值</th></tr>
+                                 </thead>
+                                <tbody>
+                                     <tr><td>名称 (Name)</td><td>[你的提示的名称和版本]</td><td><code>1_1_movie_classification_v2</code></td></tr>
+                                     <tr><td>目标 (Goal)</td><td>[对此尝试目标的一句话解释]</td><td>将电影评论分类为正面/负面</td></tr>
+                                     <tr><td>模型 (Model)</td><td>[使用的模型的名称和版本]</td><td><code>gemini-pro@001</code></td></tr>
+                                     <tr><td>Temperature</td><td>[0 - 1 之间的值]</td><td><code>0.1</code></td></tr>
+                                     <tr><td>Token Limit</td><td>[数字]</td><td><code>5</code></td></tr>
+                                     <tr><td>Top-K</td><td>[数字]</td><td><code>40</code></td></tr>
+                                     <tr><td>Top-P</td><td>[数字]</td><td><code>0.95</code></td></tr>
+                                     <tr><td>提示 (Prompt)</td><td>[写下完整的提示]</td><td><code>Classify movie review...</code></td></tr>
+                                     <tr><td>输出 (Output)</td><td>[写下输出或多个输出]</td><td><code>POSITIVE</code></td></tr>
+                                     <tr><td>状态 (Status)</td><td>[OK / NOT OK / SOMETIMES OK]</td><td><code>OK</code></td></tr>
+                                     <tr><td>反馈 (Feedback)</td><td>[关于结果的评论]</td><td>准确分类了复杂情感。</td></tr>
+                                      <tr><td>链接 (Link)</td><td>[指向已保存提示的链接 (如果适用)]</td><td><code>https://...</code></td></tr>
+                                 </tbody>
+                             </table>
+                        </div>
+                         <p class="leading-relaxed">一旦你觉得提示接近完美，就把它带到你的项目代码库中。在代码库中，将提示保存在与代码分开的文件中，这样更容易维护。最后，理想情况下，你的提示是一个操作化系统的一部分，作为提示工程师，你应该依赖自动化测试和评估程序来了解你的提示在任务上的泛化程度如何。</p>
+                         <p class="mt-4 leading-relaxed">提示工程是一个迭代的过程。制作和测试不同的提示，分析并记录结果。根据模型的性能优化你的提示。继续试验，直到你达到期望的输出。当你更改模型或模型配置时，返回并继续试验以前使用的提示。</p>
+                    </div>
+                </div>
+            </section>
+
+             <!-- Summary -->
+            <section id="summary" class="fade-in">
+                <h2 class="text-2xl font-semibold mb-6 border-l-4 border-blue-500 pl-3 text-gray-800 dark:text-gray-100">总结</h2>
+                <div class="content-card">
+                    <p class="mb-4 leading-relaxed">本白皮书讨论了提示工程。我们学习了各种提示技术，例如：</p>
+                    <ul class="list-disc list-inside space-y-2 mb-4 ml-4 text-gray-600 dark:text-gray-400">
+                        <li>Zero prompting (零样本提示)</li>
+                        <li>Few shot prompting (少样本提示)</li>
+                        <li>System prompting (系统提示)</li>
+                        <li>Role prompting (角色提示)</li>
+                        <li>Contextual prompting (上下文提示)</li>
+                        <li>Step-back prompting (后退一步提示)</li>
+                        <li>Chain of thought (思维链)</li>
+                        <li>Self consistency (自洽性)</li>
+                        <li>Tree of thoughts (思维树)</li>
+                        <li>ReAct (推理与行动)</li>
+                    </ul>
+                     <p class="mb-4 leading-relaxed">我们甚至研究了如何自动化你的提示。</p>
+                    <p class="leading-relaxed">然后，白皮书讨论了 gen AI 的挑战，例如当你的提示不足时可能发生的问题。我们以关于如何成为更好的提示工程师的最佳实践结束。</p>
+                </div>
+            </section>
+
+            <!-- Endnotes -->
+            <section id="endnotes" class="fade-in">
+                <h2 class="text-2xl font-semibold mb-6 border-l-4 border-blue-500 pl-3 text-gray-800 dark:text-gray-100">尾注</h2>
+                <div class="content-card text-sm space-y-3 text-gray-600 dark:text-gray-400">
+                    <p>1. Google, 2023, Gemini by Google. 可在: <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all">https://gemini.google.com</a>.</p>
+                    <p>2. Google, 2024, Gemini for Google Workspace Prompt Guide. 可在: <a href="https://inthecloud.withgoogle.com/gemini-for-google-workspace-prompt-guide/dl-cd.html" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all">https://inthecloud.withgoogle.com/gemini-for-google-workspace-prompt-guide/dl-cd.html</a>.</p>
+                    <p>3. Google Cloud, 2023, Introduction to Prompting. 可在: <a href="https://cloud.google.com/vertex-ai/generative-ai/docs/learn/prompts/introduction-prompt-design" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all">https://cloud.google.com/vertex-ai/generative-ai/docs/learn/prompts/introduction-prompt-design</a>.</p>
+                    <p>4. Google Cloud, 2023, Text Model Request Body: Top-P & top-K sampling methods. 可在: <a href="https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/text#request_body" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all">https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/text#request_body</a>.</p>
+                    <p>5. Wei, J., et al., 2023, Zero Shot - Fine Tuned language models are zero shot learners. 可在: <a href="https://arxiv.org/pdf/2109.01652.pdf" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all">https://arxiv.org/pdf/2109.01652.pdf</a>.</p>
+                    <p>6. Google Cloud, 2023, Google Cloud Model Garden. 可在: <a href="https://cloud.google.com/model-garden" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all">https://cloud.google.com/model-garden</a>.</p>
+                    <p>7. Brown, T., et al., 2023, Few Shot - Language Models are Few Shot learners. 可在: <a href="https://arxiv.org/pdf/2005.14165.pdf" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all">https://arxiv.org/pdf/2005.14165.pdf</a>.</p>
+                    <p>8. Zheng, L., et al., 2023, Take a Step Back: Evoking Reasoning via Abstraction in Large Language Models. 可在: <a href="https://openreview.net/pdf?id=3bq3jsvcQ1" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all">https://openreview.net/pdf?id=3bq3jsvcQ1</a></p>
+                    <p>9. Wei, J., et al., 2023, Chain of Thought Prompting. 可在: <a href="https://arxiv.org/pdf/2201.11903.pdf" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all">https://arxiv.org/pdf/2201.11903.pdf</a>.</p>
+                    <p>10. Google Cloud Platform, 2023, Chain of Thought and React. 可在: <a href="https://github.com/GoogleCloudPlatform/generative-ai/blob/main/language/prompts/examples/chain_of_thought_react.ipynb" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all">https://github.com/GoogleCloudPlatform/generative-ai/blob/main/language/prompts/examples/chain_of_thought_react.ipynb</a>.</p>
+                    <p>11. Wang, X., et al., 2023, Self Consistency Improves Chain of Thought reasoning in language models. 可在: <a href="https://arxiv.org/pdf/2203.11171.pdf" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all">https://arxiv.org/pdf/2203.11171.pdf</a>.</p>
+                    <p>12. Yao, S., et al., 2023, Tree of Thoughts: Deliberate Problem Solving with Large Language Models. 可在: <a href="https://arxiv.org/pdf/2305.10601.pdf" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all">https://arxiv.org/pdf/2305.10601.pdf</a>.</p>
+                    <p>13. Yao, S., et al., 2023, ReAct: Synergizing Reasoning and Acting in Language Models. 可在: <a href="https://arxiv.org/pdf/2210.03629.pdf" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all">https://arxiv.org/pdf/2210.03629.pdf</a>.</p>
+                    <p>14. Google Cloud Platform, 2023, Advance Prompting: Chain of Thought and React. 可在: <a href="https://github.com/GoogleCloudPlatform/applied-ai-engineering-samples/blob/main/genai-on-vertex-ai/advanced_prompting_training/cot_react.ipynb" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all">https://github.com/GoogleCloudPlatform/applied-ai-engineering-samples/blob/main/genai-on-vertex-ai/advanced_prompting_training/cot_react.ipynb</a>.</p>
+                    <p>15. Zhou, C., et al., 2023, Automatic Prompt Engineering - Large Language Models are Human-Level Prompt Engineers. 可在: <a href="https://arxiv.org/pdf/2211.01910.pdf" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline break-all">https://arxiv.org/pdf/2211.01910.pdf</a>.</p>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-16 pt-8 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-500 dark:text-gray-400 fade-in">
+            <p class="mb-2">作者: Saga</p>
+            <div class="mb-4">
+                <a href="https://x.com/sujingshen" target="_blank" rel="noopener noreferrer" class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 mx-2">
+                    <i class="fab fa-twitter fa-lg"></i>
+                    <span class="ml-1">Twitter/X</span>
+                </a>
+                <!-- Add other social links here if needed -->
+            </div>
+            <p>&copy; <span id="copyright-year"></span> Saga. 版权所有。</p>
+             <p class="mt-1 text-xs">页面由 AI 根据 Lee Boonstra 的 Google 白皮书生成。</p>
+        </footer>
+
+    </div>
+
+    <script>
+        // Dark/Light Mode Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+        const lightIcon = document.querySelector('.theme-icon-light');
+        const darkIcon = document.querySelector('.theme-icon-dark');
+
+        // Function to apply theme
+        const applyTheme = (theme) => {
+            if (theme === 'dark') {
+                htmlElement.classList.add('dark');
+                lightIcon.classList.add('hidden');
+                darkIcon.classList.remove('hidden');
+            } else {
+                htmlElement.classList.remove('dark');
+                lightIcon.classList.remove('hidden');
+                darkIcon.classList.add('hidden');
+            }
+        };
+
+        // Check for saved theme preference or system preference
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const currentTheme = savedTheme ? savedTheme : (prefersDark ? 'dark' : 'light');
+
+        applyTheme(currentTheme);
+
+        // Toggle theme on button click
+        themeToggle.addEventListener('click', () => {
+            const newTheme = htmlElement.classList.contains('dark') ? 'light' : 'dark';
+            applyTheme(newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // Set Copyright Year
+        document.getElementById('copyright-year').textContent = new Date().getFullYear();
+
+        // Fade-in sections on scroll (simple version)
+         const sections = document.querySelectorAll('main > section');
+         let delay = 0;
+         sections.forEach((section) => {
+             section.style.animationDelay = `${delay}s`;
+             section.classList.add('fade-in');
+             delay += 0.1; // Stagger the animation slightly
+         });
+
+    </script>
+
+</body>
+</html>
