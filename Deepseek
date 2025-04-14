@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>提示工程白皮书 - 可视化作品集</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 自定义动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadein { animation: fadeIn 0.6s ease-out; }
+        
+        /* 深色模式过渡 */
+        .theme-transition { transition: background-color 0.3s, color 0.3s; }
+    </style>
+</head>
+<body class="theme-transition bg-gray-50 dark:bg-gray-900">
+    <!-- 导航栏 -->
+    <nav class="sticky top-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-gray-800 dark:text-white">提示工程白皮书</h1>
+            <button id="themeToggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                <i class="fas fa-moon text-gray-600 dark:text-gray-300"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- 章节导航 -->
+        <section class="mb-16 animate-fadein">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800 dark:text-white">核心章节</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <i class="fas fa-microchip text-blue-500 text-2xl mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-white">模型配置</h3>
+                    <p class="text-gray-600 dark:text-gray-300">温度、Top-K、Top-P参数详解与组合策略</p>
+                </div>
+                <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <i class="fas fa-magic text-purple-500 text-2xl mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-white">高级技巧</h3>
+                    <p class="text-gray-600 dark:text-gray-300">思维链、自洽性、反应式推理等前沿方法</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 参数配置可视化 -->
+        <section class="mb-16 animate-fadein">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800 dark:text-white">核心参数交互演示</h2>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">温度</label>
+                        <input type="range" min="0" max="1" step="0.1" 
+                               class="w-full range-slider" 
+                               data-label="temperatureValue">
+                        <output id="temperatureValue" class="block text-sm text-gray-600 dark:text-gray-400">0.5</output>
+                    </div>
+                    <!-- 其他参数滑块 -->
+                </div>
+                <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <code class="text-sm text-gray-800 dark:text-gray-200">
+                        // 实时生成配置代码示例<br>
+                        { temperature: 0.5, topK: 40, topP: 0.9 }
+                    </code>
+                </div>
+            </div>
+        </section>
+
+        <!-- 最佳实践时间线 -->
+        <section class="mb-16 animate-fadein">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800 dark:text-white">最佳实践指南</h2>
+            <div class="relative">
+                <div class="absolute left-8 w-0.5 h-full bg-gray-200 dark:bg-gray-600"></div>
+                <div class="space-y-8">
+                    <!-- 时间线项目 -->
+                    <div class="relative pl-12">
+                        <div class="absolute left-0 w-4 h-4 bg-blue-500 rounded-full"></div>
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800 dark:text-white">结构化输出</h3>
+                        <p class="text-gray-600 dark:text-gray-300">使用JSON格式强制模型输出结构化数据，减少幻觉现象</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 作者信息 -->
+    <footer class="bg-gray-100 dark:bg-gray-800 mt-16 py-8">
+        <div class="container mx-auto px-4">
+            <div class="text-center space-y-4">
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-white">创作团队</h3>
+                <p class="text-gray-600 dark:text-gray-400">
+                    <span class="font-medium">作者：</span>Saga<br>
+                    <a href="https://x.com/sujingshen" class="text-blue-500 hover:text-blue-600">Twitter/X @sujingshen</a>
+                </p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                    © 2024 提示工程白皮书。保留所有权利。
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 深色模式切换
+        const themeToggle = document.getElementById('themeToggle');
+        const moonIcon = themeToggle.querySelector('i');
+        
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+            moonIcon.classList.toggle('fa-moon');
+            moonIcon.classList.toggle('fa-sun');
+        }
+        
+        themeToggle.addEventListener('click', toggleTheme);
+
+        // 滚动动画
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fadein');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // 滑块交互
+        document.querySelectorAll('.range-slider').forEach(slider => {
+            const output = document.getElementById(slider.dataset.label);
+            slider.addEventListener('input', (e) => {
+                output.textContent = e.target.value;
+            });
+        });
+    </script>
+</body>
+</html>
